@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Generador — PadelPromos</title>
-  <meta name="description" content="Genera el pack completo de comunicación para tu torneo de pádel en segundos.">
+  <title>Generador â PadelPromos</title>
+  <meta name="description" content="Genera el pack completo de comunicaciÃ³n para tu torneo de pÃ¡del en segundos.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500&family=DM+Serif+Display&display=swap" rel="stylesheet">
@@ -100,6 +100,28 @@
     .copied-toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: var(--text); color: #fff; padding: 10px 20px; border-radius: var(--radius); font-size: 13px; opacity: 0; transition: opacity .3s; pointer-events: none; z-index: 999; }
     .copied-toast.show { opacity: 1; }
 
+    .rc-img { display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--g); background: none; border: none; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all .2s; padding: 4px 8px; border-radius: 6px; }
+    .rc-img:hover { background: var(--gl); }
+    .rc-img svg { width: 13px; height: 13px; }
+    .rc-actions { display: flex; gap: 4px; align-items: center; }
+
+    /* Modal de previsualizaciÃ³n */
+    .img-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.75); z-index: 1000; align-items: center; justify-content: center; padding: 20px; }
+    .img-modal.open { display: flex; }
+    .img-modal-inner { background: var(--bg); border-radius: var(--radius-lg); overflow: hidden; max-width: 520px; width: 100%; box-shadow: 0 24px 60px rgba(0,0,0,.4); }
+    .img-modal-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 0.5px solid var(--border2); }
+    .img-modal-title { font-size: 14px; font-weight: 500; color: var(--text); }
+    .img-modal-close { background: none; border: none; cursor: pointer; color: var(--text3); font-size: 20px; line-height: 1; padding: 2px 6px; border-radius: 4px; }
+    .img-modal-close:hover { background: var(--bg3); color: var(--text); }
+    .img-preview-wrap { padding: 20px; background: var(--bg2); display: flex; justify-content: center; }
+    .img-preview { max-width: 100%; border-radius: 8px; box-shadow: 0 4px 16px rgba(0,0,0,.15); display: block; }
+    .img-modal-footer { padding: 16px 20px; display: flex; gap: 10px; }
+    .btn-dl { flex: 1; padding: 11px; background: var(--g); color: #fff; border: none; border-radius: var(--radius); font-size: 13px; font-weight: 500; cursor: pointer; font-family: 'DM Sans', sans-serif; display: flex; align-items: center; justify-content: center; gap: 6px; transition: background .2s; }
+    .btn-dl:hover { background: var(--gd); }
+    .btn-dl svg { width: 14px; height: 14px; }
+    .btn-dl-sec { flex: 0 0 auto; padding: 11px 16px; background: transparent; color: var(--text2); border: 0.5px solid var(--border2); border-radius: var(--radius); font-size: 13px; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all .2s; }
+    .btn-dl-sec:hover { background: var(--bg3); }
+
     @media (max-width: 900px) {
       .gen-layout { grid-template-columns: 1fr; }
       .gen-form-col { border-right: none; border-bottom: 0.5px solid var(--border2); }
@@ -121,14 +143,14 @@
 <div class="gen-layout">
   <div class="gen-form-col">
     <h1 class="gen-title">Datos del torneo</h1>
-    <p class="gen-sub">Rellena el formulario y genera el pack completo de comunicación.</p>
+    <p class="gen-sub">Rellena el formulario y genera el pack completo de comunicaciÃ³n.</p>
 
     <form id="genForm">
       <div class="form-section">
-        <div class="form-section-title">Información básica</div>
+        <div class="form-section-title">InformaciÃ³n bÃ¡sica</div>
         <div class="form-group">
           <label for="club">Nombre del club <span>*</span></label>
-          <input type="text" id="club" placeholder="Club Pádel Mallorca" required>
+          <input type="text" id="club" placeholder="Club PÃ¡del Mallorca" required>
         </div>
         <div class="form-group">
           <label for="torneo">Nombre del torneo <span>*</span></label>
@@ -146,12 +168,12 @@
         </div>
         <div class="form-row">
           <div class="form-group">
-            <label for="categorias">Categorías <span>*</span></label>
+            <label for="categorias">CategorÃ­as <span>*</span></label>
             <input type="text" id="categorias" placeholder="Mixta B, Mixta C">
           </div>
           <div class="form-group">
             <label for="precio">Precio por pareja <span>*</span></label>
-            <input type="text" id="precio" placeholder="25 €">
+            <input type="text" id="precio" placeholder="25 â¬">
           </div>
         </div>
       </div>
@@ -167,24 +189,24 @@
           <input type="text" id="patrocinadores" placeholder="Fit Point, PadelHouse...">
         </div>
         <div class="form-group">
-          <label for="enlace">Enlace de inscripción <span>Sportelia, Playtomic...</span></label>
+          <label for="enlace">Enlace de inscripciÃ³n <span>Sportelia, Playtomic...</span></label>
           <input type="url" id="enlace" placeholder="https://sportelia.com/...">
         </div>
         <div class="form-group">
-          <label for="notas">Información extra <span>opcional</span></label>
-          <textarea id="notas" placeholder="Horarios, normas especiales, aforo máximo..."></textarea>
+          <label for="notas">InformaciÃ³n extra <span>opcional</span></label>
+          <textarea id="notas" placeholder="Horarios, normas especiales, aforo mÃ¡ximo..."></textarea>
         </div>
       </div>
 
       <div class="form-section">
-        <div class="form-section-title">Tono de comunicación</div>
+        <div class="form-section-title">Tono de comunicaciÃ³n</div>
         <div class="tono-grid">
-          <div><input class="tono-opt" type="radio" name="tono" id="t1" value="cercano" checked><label class="tono-label" for="t1"><span class="tono-emoji">😊</span>Cercano</label></div>
-          <div><input class="tono-opt" type="radio" name="tono" id="t2" value="profesional"><label class="tono-label" for="t2"><span class="tono-emoji">💼</span>Profesional</label></div>
-          <div><input class="tono-opt" type="radio" name="tono" id="t3" value="deportivo"><label class="tono-label" for="t3"><span class="tono-emoji">⚡</span>Deportivo</label></div>
-          <div><input class="tono-opt" type="radio" name="tono" id="t4" value="urgente"><label class="tono-label" for="t4"><span class="tono-emoji">🔥</span>Urgente</label></div>
-          <div><input class="tono-opt" type="radio" name="tono" id="t5" value="premium"><label class="tono-label" for="t5"><span class="tono-emoji">✨</span>Premium</label></div>
-          <div><input class="tono-opt" type="radio" name="tono" id="t6" value="juvenil"><label class="tono-label" for="t6"><span class="tono-emoji">🎉</span>Juvenil</label></div>
+          <div><input class="tono-opt" type="radio" name="tono" id="t1" value="cercano" checked><label class="tono-label" for="t1"><span class="tono-emoji">ð</span>Cercano</label></div>
+          <div><input class="tono-opt" type="radio" name="tono" id="t2" value="profesional"><label class="tono-label" for="t2"><span class="tono-emoji">ð¼</span>Profesional</label></div>
+          <div><input class="tono-opt" type="radio" name="tono" id="t3" value="deportivo"><label class="tono-label" for="t3"><span class="tono-emoji">â¡</span>Deportivo</label></div>
+          <div><input class="tono-opt" type="radio" name="tono" id="t4" value="urgente"><label class="tono-label" for="t4"><span class="tono-emoji">ð¥</span>Urgente</label></div>
+          <div><input class="tono-opt" type="radio" name="tono" id="t5" value="premium"><label class="tono-label" for="t5"><span class="tono-emoji">â¨</span>Premium</label></div>
+          <div><input class="tono-opt" type="radio" name="tono" id="t6" value="juvenil"><label class="tono-label" for="t6"><span class="tono-emoji">ð</span>Juvenil</label></div>
         </div>
       </div>
 
@@ -194,7 +216,7 @@
           <div><input class="cont-opt" type="checkbox" id="c1" value="instagram" checked><label class="cont-label" for="c1"><span class="cont-check"></span>Post Instagram</label></div>
           <div><input class="cont-opt" type="checkbox" id="c2" value="whatsapp" checked><label class="cont-label" for="c2"><span class="cont-check"></span>Mensaje WhatsApp</label></div>
           <div><input class="cont-opt" type="checkbox" id="c3" value="story" checked><label class="cont-label" for="c3"><span class="cont-check"></span>Story de apertura</label></div>
-          <div><input class="cont-opt" type="checkbox" id="c4" value="plazas" checked><label class="cont-label" for="c4"><span class="cont-check"></span>Últimas plazas</label></div>
+          <div><input class="cont-opt" type="checkbox" id="c4" value="plazas" checked><label class="cont-label" for="c4"><span class="cont-check"></span>Ãltimas plazas</label></div>
           <div><input class="cont-opt" type="checkbox" id="c5" value="cuadros"><label class="cont-label" for="c5"><span class="cont-check"></span>Cuadros publicados</label></div>
           <div><input class="cont-opt" type="checkbox" id="c6" value="campeones"><label class="cont-label" for="c6"><span class="cont-check"></span>Post campeones</label></div>
           <div><input class="cont-opt" type="checkbox" id="c7" value="reel"><label class="cont-label" for="c7"><span class="cont-check"></span>Guion para reel</label></div>
@@ -204,21 +226,21 @@
 
       <button type="submit" class="btn-gen" id="genBtn">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
-        <span class="btn-text">Generar pack completo →</span>
+        <span class="btn-text">Generar pack completo â</span>
       </button>
     </form>
   </div>
 
   <div class="gen-result-col">
     <div class="result-header">
-      <div class="result-title">Pack de comunicación</div>
+      <div class="result-title">Pack de comunicaciÃ³n</div>
     </div>
     <div id="resultEmpty" class="result-empty">
       <div class="result-empty-icon">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
       </div>
-      <div class="result-empty-title">Aquí aparecerá tu pack</div>
-      <div class="result-empty-body">Rellena el formulario de la izquierda<br>y pulsa «Generar pack completo».</div>
+      <div class="result-empty-title">AquÃ­ aparecerÃ¡ tu pack</div>
+      <div class="result-empty-body">Rellena el formulario de la izquierda<br>y pulsa Â«Generar pack completoÂ».</div>
     </div>
     <div id="resultCards" class="result-cards" style="display:none"></div>
     <div id="resultActions" class="result-actions" style="display:none">
@@ -234,14 +256,256 @@
   </div>
 </div>
 
+<!-- Modal previsualizaciÃ³n imagen -->
+<div class="img-modal" id="imgModal">
+  <div class="img-modal-inner">
+    <div class="img-modal-header">
+      <span class="img-modal-title" id="imgModalTitle">Vista previa</span>
+      <button class="img-modal-close" onclick="closeImgModal()">Ã</button>
+    </div>
+    <div class="img-preview-wrap">
+      <canvas id="imgPreviewCanvas" class="img-preview"></canvas>
+    </div>
+    <div class="img-modal-footer">
+      <button class="btn-dl" id="btnDlPost" onclick="downloadFromModal('post')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Descargar Post (1:1)
+      </button>
+      <button class="btn-dl-sec" id="btnDlStory" onclick="downloadFromModal('story')">Story (9:16)</button>
+    </div>
+  </div>
+</div>
+
 <div class="copied-toast" id="toast">Copiado al portapapeles</div>
 
 <script>
   const LABELS = {
     instagram: 'Post Instagram', whatsapp: 'Mensaje WhatsApp', story: 'Story de apertura',
-    plazas: 'Últimas plazas', cuadros: 'Cuadros publicados', campeones: 'Post campeones',
+    plazas: 'Ãltimas plazas', cuadros: 'Cuadros publicados', campeones: 'Post campeones',
     reel: 'Guion para reel', agradecimiento: 'Agradecimiento final'
   };
+
+  const TIPOS_CON_IMAGEN = ['instagram', 'story', 'plazas', 'campeones', 'cuadros', 'agradecimiento'];
+  let lastFormData = {};
+  let modalCanvas = null;
+  let modalTipo = '';
+
+  // ââ CANVAS HELPERS ââââââââââââââââââââââââââââââââââââââââââ
+  function roundRect(ctx, x, y, w, h, r) {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.lineTo(x + w - r, y);
+    ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+    ctx.lineTo(x + w, y + h - r);
+    ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+    ctx.lineTo(x + r, y + h);
+    ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+    ctx.lineTo(x, y + r);
+    ctx.quadraticCurveTo(x, y, x + r, y);
+    ctx.closePath();
+  }
+
+  function wrapLines(ctx, text, maxWidth) {
+    const paragraphs = text.split('\n');
+    const result = [];
+    for (const para of paragraphs) {
+      if (!para.trim()) { result.push(''); continue; }
+      const words = para.split(' ');
+      let line = '';
+      for (const word of words) {
+        const test = line ? line + ' ' + word : word;
+        if (ctx.measureText(test).width > maxWidth && line) {
+          result.push(line);
+          line = word;
+        } else { line = test; }
+      }
+      if (line) result.push(line);
+    }
+    return result;
+  }
+
+  function buildCanvas(tipo, content, formData, forStory) {
+    const W = 1080;
+    const H = forStory ? 1920 : 1080;
+    const PAD = 80;
+
+    const cv = document.createElement('canvas');
+    cv.width = W; cv.height = H;
+    const ctx = cv.getContext('2d');
+
+    // Background gradient
+    const grad = ctx.createLinearGradient(0, 0, W * 0.6, H);
+    grad.addColorStop(0, '#091f12');
+    grad.addColorStop(0.55, '#0F6E56');
+    grad.addColorStop(1, '#1D9E75');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, W, H);
+
+    // Decorative circles
+    ctx.save();
+    ctx.globalAlpha = 0.07;
+    ctx.fillStyle = '#ffffff';
+    ctx.beginPath(); ctx.arc(W * 0.9, forStory ? H * 0.08 : H * 0.12, forStory ? 520 : 380, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(W * 0.05, H * 0.94, forStory ? 370 : 260, 0, Math.PI * 2); ctx.fill();
+    ctx.restore();
+    ctx.save();
+    ctx.globalAlpha = 0.12;
+    ctx.fillStyle = '#9FE1CB';
+    ctx.beginPath(); ctx.arc(W * 0.12, forStory ? H * 0.18 : H * 0.22, forStory ? 130 : 90, 0, Math.PI * 2); ctx.fill();
+    ctx.restore();
+
+    // PadelPromos branding top
+    const brandSize = forStory ? 34 : 30;
+    ctx.font = `400 ${brandSize}px 'DM Sans', sans-serif`;
+    ctx.textAlign = 'left';
+    ctx.fillStyle = 'rgba(255,255,255,0.45)';
+    ctx.fillText('Padel', PAD, forStory ? 90 : 72);
+    const pW = ctx.measureText('Padel').width;
+    ctx.fillStyle = '#9FE1CB';
+    ctx.fillText('Promos', PAD + pW, forStory ? 90 : 72);
+
+    // Club name
+    const clubSize = forStory ? 48 : 42;
+    ctx.font = `500 ${clubSize}px 'DM Sans', sans-serif`;
+    ctx.fillStyle = 'rgba(255,255,255,0.85)';
+    let club = (formData.club || 'Club').toUpperCase();
+    while (ctx.measureText(club).width > W - PAD * 2 && club.length > 4) club = club.slice(0, -1);
+    if (club !== (formData.club || '').toUpperCase()) club += 'â¦';
+    const clubY = forStory ? 220 : 168;
+    ctx.fillText(club, PAD, clubY);
+
+    // Tournament name
+    const torneoSize = forStory ? 82 : 68;
+    ctx.font = `700 ${torneoSize}px 'DM Sans', sans-serif`;
+    ctx.fillStyle = '#ffffff';
+    const torneoLines = wrapLines(ctx, formData.torneo || 'Torneo', W - PAD * 2);
+    const torneoLineH = forStory ? 98 : 82;
+    let ty = forStory ? 330 : 264;
+    for (const ln of torneoLines.slice(0, 3)) {
+      ctx.fillText(ln, PAD, ty);
+      ty += torneoLineH;
+    }
+
+    // Type badge pill
+    const badgeY = ty + (forStory ? 50 : 36);
+    const labelText = LABELS[tipo] || tipo;
+    ctx.font = `500 28px 'DM Sans', sans-serif`;
+    const bw = ctx.measureText(labelText).width + 52;
+    const bh = 50;
+    ctx.fillStyle = 'rgba(159,225,203,0.22)';
+    roundRect(ctx, PAD, badgeY, bw, bh, bh / 2); ctx.fill();
+    ctx.strokeStyle = 'rgba(159,225,203,0.55)'; ctx.lineWidth = 1.5;
+    roundRect(ctx, PAD, badgeY, bw, bh, bh / 2); ctx.stroke();
+    ctx.fillStyle = '#9FE1CB';
+    ctx.fillText(labelText, PAD + 26, badgeY + 34);
+
+    // Content text area
+    let mainText = content, hashText = '';
+    if (tipo === 'instagram') {
+      const hi = content.indexOf('#');
+      if (hi > 10) { mainText = content.slice(0, hi).trim(); hashText = content.slice(hi).trim(); }
+    }
+
+    const contentStartY = badgeY + bh + (forStory ? 56 : 44);
+    const maxContentH = H - contentStartY - (forStory ? 260 : 200);
+
+    // Subtle overlay behind text
+    ctx.save();
+    ctx.globalAlpha = 0.1;
+    ctx.fillStyle = '#000';
+    roundRect(ctx, PAD - 24, contentStartY - 28, W - PAD * 2 + 48, Math.min(maxContentH + 60, forStory ? 900 : 500), 18);
+    ctx.fill();
+    ctx.restore();
+
+    const mainSize = forStory ? 48 : 38;
+    ctx.font = `400 ${mainSize}px 'DM Sans', sans-serif`;
+    ctx.fillStyle = '#ffffff';
+    const mainLineH = forStory ? 66 : 54;
+    const mainLines = wrapLines(ctx, mainText, W - PAD * 2);
+    let cy = contentStartY + 10;
+    for (const ln of mainLines) {
+      if (cy + mainLineH > contentStartY + maxContentH) break;
+      if (ln === '') { cy += mainLineH * 0.45; continue; }
+      ctx.fillText(ln, PAD, cy);
+      cy += mainLineH;
+    }
+
+    // Hashtags
+    if (hashText && cy + 30 < H - 160) {
+      cy += 16;
+      const hashSize = forStory ? 34 : 27;
+      ctx.font = `400 ${hashSize}px 'DM Sans', sans-serif`;
+      ctx.fillStyle = '#9FE1CB';
+      const hashLineH = forStory ? 48 : 38;
+      const hashLines = wrapLines(ctx, hashText, W - PAD * 2);
+      for (const ln of hashLines) {
+        if (cy + hashLineH > H - 150) break;
+        ctx.fillText(ln, PAD, cy);
+        cy += hashLineH;
+      }
+    }
+
+    // Bottom bar
+    const botY = H - 80;
+    ctx.strokeStyle = 'rgba(255,255,255,0.18)'; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(PAD, botY - 28); ctx.lineTo(W - PAD, botY - 28); ctx.stroke();
+
+    const infoparts = [formData.fecha, formData.categorias, formData.precio ? `${formData.precio}/pareja` : ''].filter(Boolean);
+    ctx.font = `400 ${forStory ? 30 : 26}px 'DM Sans', sans-serif`;
+    ctx.fillStyle = 'rgba(255,255,255,0.55)';
+    ctx.textAlign = 'left';
+    ctx.fillText(infoparts.join('  Â·  '), PAD, botY + 8);
+
+    ctx.fillStyle = 'rgba(255,255,255,0.32)';
+    ctx.textAlign = 'right';
+    ctx.fillText('padelpromos.es', W - PAD, botY + 8);
+
+    return cv;
+  }
+
+  // ââ MODAL ââââââââââââââââââââââââââââââââââââââââââââââââââââ
+  function openImgModal(tipo, content) {
+    modalTipo = tipo;
+    document.getElementById('imgModalTitle').textContent = LABELS[tipo] || tipo;
+    const forStory = tipo === 'story';
+    const cv = buildCanvas(tipo, content, lastFormData, forStory);
+    modalCanvas = { tipo, content };
+
+    // Show preview scaled down
+    const preview = document.getElementById('imgPreviewCanvas');
+    const maxW = 460;
+    const scale = maxW / cv.width;
+    preview.width = cv.width * scale;
+    preview.height = cv.height * scale;
+    const pCtx = preview.getContext('2d');
+    pCtx.drawImage(cv, 0, 0, preview.width, preview.height);
+
+    // Show/hide story button
+    document.getElementById('btnDlStory').style.display = forStory ? 'none' : 'block';
+    document.getElementById('btnDlPost').textContent = forStory ? 'â¬ Descargar Story (9:16)' : 'â¬ Descargar Post (1:1)';
+
+    document.getElementById('imgModal').classList.add('open');
+  }
+
+  function closeImgModal() {
+    document.getElementById('imgModal').classList.remove('open');
+  }
+
+  function downloadFromModal(format) {
+    if (!modalCanvas) return;
+    const forStory = format === 'story';
+    const cv = buildCanvas(modalCanvas.tipo, modalCanvas.content, lastFormData, forStory);
+    const torneo = (lastFormData.torneo || 'torneo').toLowerCase().replace(/\s+/g, '-');
+    const link = document.createElement('a');
+    link.download = `${torneo}-${modalCanvas.tipo}-${forStory ? 'story' : 'post'}.png`;
+    link.href = cv.toDataURL('image/png');
+    link.click();
+  }
+
+  // Close modal on backdrop click
+  document.getElementById('imgModal').addEventListener('click', (e) => {
+    if (e.target === document.getElementById('imgModal')) closeImgModal();
+  });
 
   function showToast(msg) {
     const t = document.getElementById('toast');
@@ -271,15 +535,23 @@
       const label = LABELS[c];
       const content = parsed[label] || parsed[c] || Object.values(parsed)[Object.keys(parsed).indexOf(label)] || '';
       if (!content) return;
+      const tieneImagen = TIPOS_CON_IMAGEN.includes(c);
+      const safeContent = content.replace(/`/g, '\\`').replace(/\\/g, '\\\\').replace(/'/g, "\\'");
       const card = document.createElement('div');
       card.className = 'rc';
       card.innerHTML = `
         <div class="rc-header">
           <span class="rc-tag">${label}</span>
-          <button class="rc-copy" onclick="copyText(this.closest('.rc').querySelector('.rc-body').textContent.trim())">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-            Copiar
-          </button>
+          <div class="rc-actions">
+            ${tieneImagen ? `<button class="rc-img" onclick="openImgModal('${c}', this.closest('.rc').querySelector('.rc-body').textContent.trim())">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+              Imagen
+            </button>` : ''}
+            <button class="rc-copy" onclick="copyText(this.closest('.rc').querySelector('.rc-body').textContent.trim())">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              Copiar
+            </button>
+          </div>
         </div>
         <div class="rc-body">${content}</div>`;
       container.appendChild(card);
@@ -309,6 +581,7 @@
       notas: document.getElementById('notas').value,
       tono, contenidos
     };
+    lastFormData = { ...data };
 
     document.getElementById('resultEmpty').style.display = 'none';
     document.getElementById('resultCards').style.display = 'none';
@@ -330,7 +603,7 @@
     } catch (err) {
       document.getElementById('resultEmpty').style.display = 'block';
       document.getElementById('resultEmpty').querySelector('.result-empty-title').textContent = 'Error al generar';
-      document.getElementById('resultEmpty').querySelector('.result-empty-body').textContent = 'Revisa tu conexión e inténtalo de nuevo.';
+      document.getElementById('resultEmpty').querySelector('.result-empty-body').textContent = 'Revisa tu conexiÃ³n e intÃ©ntalo de nuevo.';
     } finally {
       btn.classList.remove('loading');
       btn.disabled = false;
@@ -350,8 +623,8 @@
     document.getElementById('resultCards').style.display = 'none';
     document.getElementById('resultActions').style.display = 'none';
     document.getElementById('resultEmpty').style.display = 'block';
-    document.getElementById('resultEmpty').querySelector('.result-empty-title').textContent = 'Aquí aparecerá tu pack';
-    document.getElementById('resultEmpty').querySelector('.result-empty-body').textContent = 'Rellena el formulario de la izquierda\ny pulsa «Generar pack completo».';
+    document.getElementById('resultEmpty').querySelector('.result-empty-title').textContent = 'AquÃ­ aparecerÃ¡ tu pack';
+    document.getElementById('resultEmpty').querySelector('.result-empty-body').textContent = 'Rellena el formulario de la izquierda\ny pulsa Â«Generar pack completoÂ».';
     document.getElementById('genForm').reset();
   });
 </script>
