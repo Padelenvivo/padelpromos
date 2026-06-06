@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Precios — PadelPromos</title>
+  <meta name="description" content="Planes para clubs, organizadores, escuelas y agencias. Empieza gratis, sin tarjeta.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500&family=DM+Serif+Display&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --g: #1D9E75; --gd: #0F6E56; --gl: #E1F5EE; --gm: #9FE1CB;
+      --text: #0f1a14; --text2: #4a5e54; --text3: #8aa096;
+      --bg: #ffffff; --bg2: #f5faf7; --bg3: #edf6f1;
+      --border: rgba(29,158,117,.15); --border2: rgba(29,158,117,.3);
+      --radius: 10px; --radius-lg: 14px;
+    }
+    body { font-family: 'DM Sans', sans-serif; color: var(--text); background: var(--bg); line-height: 1.6; -webkit-font-smoothing: antialiased; }
+    nav { background: rgba(255,255,255,.95); backdrop-filter: blur(12px); border-bottom: 0.5px solid var(--border2); padding: 0 40px; display: flex; align-items: center; justify-content: space-between; height: 60px; position: sticky; top: 0; z-index: 100; }
+    .nav-logo { font-size: 17px; font-weight: 500; color: var(--text); text-decoration: none; }
+    .nav-logo b { color: var(--g); font-weight: 500; }
+    .nav-links { display: flex; gap: 28px; list-style: none; }
+    .nav-links a { font-size: 14px; color: var(--text2); text-decoration: none; transition: color .2s; }
+    .nav-links a:hover { color: var(--text); }
+    .nav-cta { display: inline-flex; align-items: center; gap: 6px; padding: 9px 20px; background: var(--g); color: #fff; border-radius: var(--radius); font-size: 13px; font-weight: 500; text-decoration: none; transition: background .2s; }
+    .nav-cta:hover { background: var(--gd); }
+
+    .page-header { padding: 72px 40px 48px; text-align: center; border-bottom: 0.5px solid var(--border2); background: var(--bg2); }
+    .page-label { font-size: 11px; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; color: var(--g); margin-bottom: 12px; }
+    h1 { font-family: 'DM Serif Display', serif; font-size: 42px; font-weight: 400; color: var(--text); margin-bottom: 14px; letter-spacing: -.4px; line-height: 1.15; }
+    .page-sub { font-size: 16px; color: var(--text2); line-height: 1.65; max-width: 440px; margin: 0 auto; }
+
+    .plans { padding: 60px 40px; }
+    .plans-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; max-width: 1100px; margin: 0 auto; }
+
+    .pc { background: var(--bg); border: 0.5px solid var(--border2); border-radius: var(--radius-lg); padding: 28px 22px; display: flex; flex-direction: column; transition: transform .2s; }
+    .pc:hover { transform: translateY(-4px); }
+    .pc.hot { border: 2px solid var(--g); position: relative; }
+    .pc-popular { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--g); color: #fff; font-size: 11px; font-weight: 500; padding: 4px 14px; border-radius: 20px; white-space: nowrap; }
+    .pc-name { font-size: 13px; color: var(--text3); margin-bottom: 6px; }
+    .pc-price { font-size: 36px; font-weight: 500; color: var(--text); letter-spacing: -.5px; line-height: 1; }
+    .pc-price span { font-size: 14px; font-weight: 400; color: var(--text3); }
+    .pc-sub { font-size: 12px; color: var(--text3); margin-top: 6px; margin-bottom: 22px; padding-bottom: 20px; border-bottom: 0.5px solid var(--border2); line-height: 1.5; }
+    .pc-feats { flex: 1; display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; }
+    .pc-feat { font-size: 13px; color: var(--text2); display: flex; align-items: flex-start; gap: 8px; }
+    .pc-feat svg { width: 14px; height: 14px; color: var(--g); flex-shrink: 0; margin-top: 3px; }
+    .pc-feat.no { color: var(--text3); }
+    .pc-feat.no svg { color: var(--border2); }
+
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 11px 20px; background: var(--g); color: #fff; border: none; border-radius: var(--radius); font-size: 13px; font-weight: 500; text-decoration: none; cursor: pointer; transition: background .2s, transform .15s; font-family: 'DM Sans', sans-serif; width: 100%; }
+    .btn:hover { background: var(--gd); }
+    .btn-ghost { background: transparent; color: var(--g); border: 1.5px solid var(--g); }
+    .btn-ghost:hover { background: var(--gl); }
+
+    /* TABLA COMPARATIVA */
+    .compare { padding: 0 40px 80px; max-width: 1100px; margin: 0 auto; }
+    .compare-title { font-family: 'DM Serif Display', serif; font-size: 28px; font-weight: 400; color: var(--text); margin-bottom: 28px; text-align: center; }
+    .compare-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .compare-table th { padding: 12px 16px; text-align: left; font-size: 12px; font-weight: 500; color: var(--text3); border-bottom: 0.5px solid var(--border2); }
+    .compare-table th:first-child { width: 35%; }
+    .compare-table th:not(:first-child) { text-align: center; }
+    .compare-table td { padding: 14px 16px; border-bottom: 0.5px solid var(--border2); color: var(--text2); vertical-align: middle; }
+    .compare-table td:not(:first-child) { text-align: center; }
+    .compare-table tr:last-child td { border-bottom: none; }
+    .compare-table tbody tr:hover { background: var(--bg2); }
+    .compare-table .section-row td { background: var(--bg3); color: var(--gd); font-size: 11px; font-weight: 500; letter-spacing: .08em; text-transform: uppercase; padding: 8px 16px; }
+    .chk { display: inline-flex; width: 18px; height: 18px; background: var(--gl); border-radius: 50%; align-items: center; justify-content: center; }
+    .chk svg { width: 10px; height: 10px; color: var(--gd); }
+    .no-chk { color: var(--text3); font-size: 16px; }
+    .plan-col-header { font-weight: 500; color: var(--text); font-size: 13px; }
+
+    /* FAQ */
+    .faq { padding: 60px 40px; background: var(--bg2); }
+    .faq-inner { max-width: 640px; margin: 0 auto; }
+    .faq h2 { font-family: 'DM Serif Display', serif; font-size: 28px; font-weight: 400; color: var(--text); margin-bottom: 32px; text-align: center; }
+    .faq-item { border-bottom: 0.5px solid var(--border2); }
+    .faq-q { display: flex; align-items: center; justify-content: space-between; padding: 18px 0; cursor: pointer; font-size: 15px; font-weight: 500; color: var(--text); gap: 12px; }
+    .faq-q svg { width: 18px; height: 18px; color: var(--text3); flex-shrink: 0; transition: transform .25s; }
+    .faq-item.open .faq-q svg { transform: rotate(180deg); }
+    .faq-a { font-size: 14px; color: var(--text2); line-height: 1.7; max-height: 0; overflow: hidden; transition: max-height .35s ease, padding .25s; }
+    .faq-item.open .faq-a { max-height: 300px; padding-bottom: 18px; }
+
+    /* CTA */
+    .cta-section { padding: 72px 40px; text-align: center; background: var(--g); }
+    .cta-section h2 { font-family: 'DM Serif Display', serif; font-size: 36px; font-weight: 400; color: #fff; line-height: 1.2; margin-bottom: 12px; }
+    .cta-section p { font-size: 15px; color: rgba(255,255,255,.75); margin-bottom: 28px; }
+    .btn-white { background: #fff; color: var(--g); border: none; padding: 14px 32px; font-size: 15px; font-weight: 500; border-radius: var(--radius); cursor: pointer; transition: opacity .2s; font-family: 'DM Sans', sans-serif; display: inline-flex; align-items: center; gap: 6px; text-decoration: none; }
+    .btn-white:hover { opacity: .92; }
+    .cta-note { font-size: 12px; color: rgba(255,255,255,.5); margin-top: 12px; }
+
+    footer { padding: 28px 40px; border-top: 0.5px solid var(--border2); display: flex; align-items: center; justify-content: space-between; }
+    .footer-logo { font-size: 15px; font-weight: 500; color: var(--text); text-decoration: none; }
+    .footer-logo b { color: var(--g); font-weight: 500; }
+    .footer-note { font-size: 12px; color: var(--text3); }
+
+    @media (max-width: 900px) {
+      nav { padding: 0 20px; }
+      .nav-links { display: none; }
+      .page-header { padding: 52px 20px 36px; }
+      h1 { font-size: 30px; }
+      .plans { padding: 40px 20px; }
+      .plans-grid { grid-template-columns: repeat(2, 1fr); }
+      .compare { padding: 0 20px 60px; overflow-x: auto; }
+      .faq { padding: 48px 20px; }
+      .cta-section { padding: 56px 20px; }
+      footer { flex-direction: column; gap: 14px; text-align: center; }
+    }
+    @media (max-width: 560px) {
+      .plans-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="nav-logo">Padel<b>Promos</b></a>
+  <ul class="nav-links">
+    <li><a href="/#como-funciona">Cómo funciona</a></li>
+    <li><a href="/#ejemplos">Ejemplos</a></li>
+    <li><a href="precios.html">Precios</a></li>
+  </ul>
+  <a href="generador.html" class="nav-cta">Empezar gratis →</a>
+</nav>
+
+<div class="page-header">
+  <div class="page-label">Precios</div>
+  <h1>Empieza gratis.<br>Escala cuando lo necesites.</h1>
+  <p class="page-sub">Sin permanencia, sin contrato. Cancela cuando quieras.</p>
+</div>
+
+<div class="plans">
+  <div class="plans-grid">
+
+    <div class="pc">
+      <div class="pc-name">Gratis</div>
+      <div class="pc-price">0 €</div>
+      <div class="pc-sub">Para probar sin compromiso.<br>Sin registro ni tarjeta.</div>
+      <div class="pc-feats">
+        <div class="pc-feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>3 packs al mes</div>
+        <div class="pc-feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>Todos los formatos de texto</div>
+        <div class="pc-feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>6 tonos de comunicación</div>
+        <div class="pc-feat no"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>Marca de agua en diseños</div>
+        <div class="pc-feat no"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>Sin historial de torneos</div>
+      </div>
+      <a href="generador.html" class="btn btn-ghost">Empezar gratis</a>
+    </div>
+
+    <div class="pc hot">
+      <div class="pc-popular">Más popular</div>
+      <div class="pc-name">Club</div>
+      <div class="pc-price">15 €<span>/mes</span></div>
+      <div class="pc-sub">Para clubs que organizan<br>torneos regularmente.</div>
+      <div class="pc-feats">
+        <div class="pc-feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>Packs ilimitados</div>
+        <div class="pc-feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>Sin marca de agua</div>
+        <div class="pc-feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>Logo y colores propios</div>
+        <div class="pc-feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>Historial de torneos</div>
+        <div class="pc-feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>Tarjetas visuales descargables</div>
+      </div>
+      <a href="generador.html" class="btn">Empezar →</a>
+    </div>
+
+    <div class="pc">
+      <div class="pc-name">Pro</div>
+      <div class="pc-price">25 €<span>/mes</span></div>
+      <div class="pc-sub">Para circuitos, escuelas<br>y federaciones.</div>
+      <div class="pc-feats">
+        <div class="pc-feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>Todo lo del plan Club</div>
+        <div class="pc-feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>Hasta 5 perfiles de club</div>
+        <div class="pc-feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>Tono personalizado por perfil</div>
+        <div class="pc-feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>Acceso anticipado a novedades</div>
+        <div class="pc-feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>Soporte por email prioritario</div>
+      </div>
+      <a href="generador.html" class="btn btn-ghost">Empezar</a>
+    </div>
+
+    <div class="pc">
+      <div class="pc-name">Agencia</div>
+      <div class="pc-price">39 €<span>/mes</span></div>
+      <div class="pc-sub">Para social media managers<br>que gestionan varios clubs.</div>
+      <div class="pc-feats">
+        <div class="pc-feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>Todo lo del plan Pro</div>
+        <div class="pc-feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>Clubs ilimitados</div>
+        <div class="pc-feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>Panel multicliente</div>
+        <div class="pc-feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>Exportación masiva de packs</div>
+        <div class="pc-feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>Soporte dedicado</div>
+      </div>
+      <a href="mailto:hola@padelpromos.es" class="btn btn-ghost">Hablar con ventas</a>
+    </div>
+
+  </div>
+</div>
+
+<div class="compare">
+  <div class="compare-title">Comparativa completa</div>
+  <table class="compare-table">
+    <thead>
+      <tr>
+        <th></th>
+        <th class="plan-col-header">Gratis</th>
+        <th class="plan-col-header" style="color:var(--g)">Club</th>
+        <th class="plan-col-header">Pro</th>
+        <th class="plan-col-header">Agencia</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="section-row"><td colspan="5">Generación de contenido</td></tr>
+      <tr><td>Packs por mes</td><td>3</td><td>Ilimitados</td><td>Ilimitados</td><td>Ilimitados</td></tr>
+      <tr><td>Formatos de texto</td><td><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span></td><td><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span></td><td><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span></td><td><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span></td></tr>
+      <tr><td>6 tonos de comunicación</td><td><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span></td><td><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span></td><td><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span></td><td><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span></td></tr>
+      <tr><td>Tarjetas visuales descargables</td><td><span class="no-chk">—</span></td><td><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span></td><td><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span></td><td><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span></td></tr>
+      <tr><td>Sin marca de agua</td><td><span class="no-chk">—</span></td><td><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span></td><td><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span></td><td><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span></td></tr>
+
+      <tr class="section-row"><td colspan="5">Personalización</td></tr>
+      <tr><td>Logo y colores del club</td><td><span class="no-chk">—</span></td><td><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span></td><td><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span></td><td><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span></td></tr>
+      <tr><td>Historial de torneos</td><td><span class="no-chk">—</span></td><td><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span></td><td><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span></td><td><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span></td></tr>
+      <tr><td>Perfiles de club</td><td>1</td><td>1</td><td>Hasta 5</td><td>Ilimitados</td></tr>
+      <tr><td>Tono personalizado por perfil</td><td><span class="no-chk">—</span></td><td><span class="no-chk">—</span></td><td><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span></td><td><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span></td></tr>
+
+      <tr class="section-row"><td colspan="5">Gestión y exportación</td></tr>
+      <tr><td>Panel multicliente</td><td><span class="no-chk">—</span></td><td><span class="no-chk">—</span></td><td><span class="no-chk">—</span></td><td><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span></td></tr>
+      <tr><td>Exportación masiva de packs</td><td><span class="no-chk">—</span></td><td><span class="no-chk">—</span></td><td><span class="no-chk">—</span></td><td><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span></td></tr>
+
+      <tr class="section-row"><td colspan="5">Soporte</td></tr>
+      <tr><td>Soporte</td><td>—</td><td>Email</td><td>Email prioritario</td><td>Dedicado</td></tr>
+      <tr><td>Acceso anticipado a novedades</td><td><span class="no-chk">—</span></td><td><span class="no-chk">—</span></td><td><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span></td><td><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="faq">
+  <div class="faq-inner">
+    <h2>Preguntas frecuentes</h2>
+    <div class="faq-item">
+      <div class="faq-q">¿Necesito registro para el plan gratuito?<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+      <div class="faq-a">No. Puedes generar hasta 3 packs al mes sin crear ninguna cuenta. Solo rellenas el formulario y obtienes el contenido al instante.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">¿Puedo cancelar en cualquier momento?<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+      <div class="faq-a">Sí, sin permanencia ni penalizaciones. Si cancelas, el plan sigue activo hasta el final del periodo pagado.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">¿PadelPromos sustituye a Sportelia o Playtomic?<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+      <div class="faq-a">No. PadelPromos es una herramienta de comunicación que genera el contenido para promover tus torneos. La gestión del torneo (inscripciones, cuadros, horarios) sigue en la plataforma que ya usas. Puedes pegar tu enlace de Sportelia o Playtomic directamente en el generador.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">¿En qué idioma genera el contenido?<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+      <div class="faq-a">Actualmente en español de España. En breve añadiremos catalán, euskera y portugués para los planes Pro y Agencia.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">¿Puedo usar PadelPromos para torneos de otros deportes?<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+      <div class="faq-a">Está optimizado para pádel, pero funciona bien para tenis, pickleball y otros deportes de raqueta. El lenguaje y los formatos son transferibles.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">¿El plan Agencia incluye factura para cada club cliente?<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+      <div class="faq-a">La suscripción se factura a nombre de la agencia. Si necesitas facturación por cliente, escríbenos a hola@padelpromos.es y lo gestionamos.</div>
+    </div>
+  </div>
+</div>
+
+<section class="cta-section">
+  <h2>Empieza gratis hoy mismo.</h2>
+  <p>Sin registro, sin tarjeta. Tu primer pack en menos de 30 segundos.</p>
+  <a href="generador.html" class="btn-white">Crear mi primer pack →</a>
+  <p class="cta-note">PadelPromos no sustituye Sportelia. La complementa.</p>
+</section>
+
+<footer>
+  <a href="/" class="footer-logo">Padel<b>Promos</b></a>
+  <span class="footer-note">© 2026 PadelPromos.es · <a href="mailto:hola@padelpromos.es" style="color:inherit;text-decoration:none">hola@padelpromos.es</a></span>
+</footer>
+
+<script>
+  document.querySelectorAll('.faq-item').forEach(item => {
+    item.querySelector('.faq-q').addEventListener('click', () => {
+      const isOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+      if (!isOpen) item.classList.add('open');
+    });
+  });
+</script>
+</body>
+</html>

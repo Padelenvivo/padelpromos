@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Generador — PadelPromos</title>
+  <meta name="description" content="Genera el pack completo de comunicación para tu torneo de pádel en segundos.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500&family=DM+Serif+Display&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --g: #1D9E75; --gd: #0F6E56; --gl: #E1F5EE; --gm: #9FE1CB;
+      --text: #0f1a14; --text2: #4a5e54; --text3: #8aa096;
+      --bg: #ffffff; --bg2: #f5faf7; --bg3: #edf6f1;
+      --border: rgba(29,158,117,.15); --border2: rgba(29,158,117,.3);
+      --radius: 10px; --radius-lg: 14px;
+    }
+    body { font-family: 'DM Sans', sans-serif; color: var(--text); background: var(--bg2); line-height: 1.6; -webkit-font-smoothing: antialiased; min-height: 100vh; }
+    nav { background: rgba(255,255,255,.95); backdrop-filter: blur(12px); border-bottom: 0.5px solid var(--border2); padding: 0 40px; display: flex; align-items: center; justify-content: space-between; height: 60px; position: sticky; top: 0; z-index: 100; }
+    .nav-logo { font-size: 17px; font-weight: 500; color: var(--text); text-decoration: none; }
+    .nav-logo b { color: var(--g); font-weight: 500; }
+    .nav-back { font-size: 13px; color: var(--text2); text-decoration: none; display: flex; align-items: center; gap: 5px; transition: color .2s; }
+    .nav-back:hover { color: var(--text); }
+    .nav-back svg { width: 14px; height: 14px; }
+
+    .gen-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 0; min-height: calc(100vh - 60px); }
+    .gen-form-col { padding: 40px; background: var(--bg); border-right: 0.5px solid var(--border2); overflow-y: auto; }
+    .gen-result-col { padding: 40px; background: var(--bg2); overflow-y: auto; }
+
+    .gen-title { font-family: 'DM Serif Display', serif; font-size: 28px; font-weight: 400; color: var(--text); margin-bottom: 6px; letter-spacing: -.3px; }
+    .gen-sub { font-size: 14px; color: var(--text2); margin-bottom: 32px; }
+
+    .form-group { margin-bottom: 20px; }
+    label { display: block; font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 6px; }
+    label span { font-weight: 400; color: var(--text3); font-size: 12px; }
+    input[type="text"], input[type="url"], input[type="date"], input[type="number"], textarea, select {
+      width: 100%; padding: 10px 14px; border: 0.5px solid var(--border2); border-radius: var(--radius);
+      font-size: 14px; font-family: 'DM Sans', sans-serif; color: var(--text); background: var(--bg);
+      transition: border-color .2s, box-shadow .2s; outline: none; appearance: none;
+    }
+    input:focus, textarea:focus, select:focus { border-color: var(--g); box-shadow: 0 0 0 3px rgba(29,158,117,.1); }
+    textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
+    select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238aa096' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 36px; cursor: pointer; }
+
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .form-section { margin-bottom: 28px; padding-bottom: 28px; border-bottom: 0.5px solid var(--border2); }
+    .form-section:last-of-type { border-bottom: none; }
+    .form-section-title { font-size: 12px; font-weight: 500; letter-spacing: .08em; text-transform: uppercase; color: var(--g); margin-bottom: 16px; }
+
+    .tono-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .tono-opt { display: none; }
+    .tono-label { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 12px 8px; border: 0.5px solid var(--border2); border-radius: var(--radius); cursor: pointer; font-size: 12px; color: var(--text2); text-align: center; transition: all .2s; }
+    .tono-label:hover { border-color: var(--g); color: var(--text); }
+    .tono-opt:checked + .tono-label { border-color: var(--g); background: var(--gl); color: var(--gd); font-weight: 500; }
+    .tono-emoji { font-size: 20px; }
+
+    .contenidos-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+    .cont-opt { display: none; }
+    .cont-label { display: flex; align-items: center; gap: 8px; padding: 10px 12px; border: 0.5px solid var(--border2); border-radius: var(--radius); cursor: pointer; font-size: 12px; color: var(--text2); transition: all .2s; }
+    .cont-label:hover { border-color: var(--g); }
+    .cont-opt:checked + .cont-label { border-color: var(--g); background: var(--gl); color: var(--gd); }
+    .cont-check { width: 14px; height: 14px; border: 1.5px solid var(--border2); border-radius: 3px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all .2s; }
+    .cont-opt:checked + .cont-label .cont-check { background: var(--g); border-color: var(--g); }
+    .cont-opt:checked + .cont-label .cont-check::after { content: ''; width: 8px; height: 8px; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E") center/contain no-repeat; }
+
+    .btn-gen { width: 100%; padding: 14px; background: var(--g); color: #fff; border: none; border-radius: var(--radius); font-size: 15px; font-weight: 500; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: background .2s, transform .15s; display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 8px; }
+    .btn-gen:hover { background: var(--gd); }
+    .btn-gen:active { transform: scale(.98); }
+    .btn-gen:disabled { opacity: .6; cursor: not-allowed; }
+    .btn-gen svg { width: 16px; height: 16px; animation: spin 1s linear infinite; display: none; }
+    .btn-gen.loading svg { display: block; }
+    .btn-gen.loading .btn-text { display: none; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* RESULTADOS */
+    .result-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+    .result-title { font-family: 'DM Serif Display', serif; font-size: 22px; font-weight: 400; color: var(--text); }
+    .result-empty { text-align: center; padding: 80px 20px; }
+    .result-empty-icon { width: 64px; height: 64px; background: var(--bg3); border-radius: 16px; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; }
+    .result-empty-icon svg { width: 32px; height: 32px; color: var(--text3); }
+    .result-empty-title { font-size: 16px; font-weight: 500; color: var(--text); margin-bottom: 6px; }
+    .result-empty-body { font-size: 14px; color: var(--text3); line-height: 1.6; }
+
+    .result-cards { display: flex; flex-direction: column; gap: 16px; }
+    .rc { background: var(--bg); border: 0.5px solid var(--border2); border-radius: var(--radius-lg); overflow: hidden; }
+    .rc-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; border-bottom: 0.5px solid var(--border2); }
+    .rc-tag { font-size: 11px; font-weight: 500; color: var(--gd); background: var(--gl); padding: 3px 10px; border-radius: 10px; border: 0.5px solid var(--gm); }
+    .rc-copy { display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--g); background: none; border: none; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: opacity .2s; padding: 4px 8px; border-radius: 6px; }
+    .rc-copy:hover { background: var(--gl); }
+    .rc-copy svg { width: 13px; height: 13px; }
+    .rc-body { padding: 16px 18px; font-size: 13px; color: var(--text2); line-height: 1.7; white-space: pre-wrap; }
+
+    .result-actions { display: flex; gap: 10px; margin-top: 20px; }
+    .btn-sec { flex: 1; padding: 11px; background: transparent; color: var(--g); border: 1.5px solid var(--g); border-radius: var(--radius); font-size: 13px; font-weight: 500; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: background .2s; display: flex; align-items: center; justify-content: center; gap: 6px; }
+    .btn-sec:hover { background: var(--gl); }
+    .btn-sec svg { width: 14px; height: 14px; }
+
+    .copied-toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: var(--text); color: #fff; padding: 10px 20px; border-radius: var(--radius); font-size: 13px; opacity: 0; transition: opacity .3s; pointer-events: none; z-index: 999; }
+    .copied-toast.show { opacity: 1; }
+
+    @media (max-width: 900px) {
+      .gen-layout { grid-template-columns: 1fr; }
+      .gen-form-col { border-right: none; border-bottom: 0.5px solid var(--border2); }
+      nav { padding: 0 20px; }
+      .gen-form-col, .gen-result-col { padding: 24px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="nav-logo">Padel<b>Promos</b></a>
+  <a href="/" class="nav-back">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+    Volver al inicio
+  </a>
+</nav>
+
+<div class="gen-layout">
+  <div class="gen-form-col">
+    <h1 class="gen-title">Datos del torneo</h1>
+    <p class="gen-sub">Rellena el formulario y genera el pack completo de comunicación.</p>
+
+    <form id="genForm">
+      <div class="form-section">
+        <div class="form-section-title">Información básica</div>
+        <div class="form-group">
+          <label for="club">Nombre del club <span>*</span></label>
+          <input type="text" id="club" placeholder="Club Pádel Mallorca" required>
+        </div>
+        <div class="form-group">
+          <label for="torneo">Nombre del torneo <span>*</span></label>
+          <input type="text" id="torneo" placeholder="Torneo Mixto Open" required>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="fecha_inicio">Fecha inicio <span>*</span></label>
+            <input type="date" id="fecha_inicio" required>
+          </div>
+          <div class="form-group">
+            <label for="fecha_fin">Fecha fin <span>opcional</span></label>
+            <input type="date" id="fecha_fin">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="categorias">Categorías <span>*</span></label>
+            <input type="text" id="categorias" placeholder="Mixta B, Mixta C">
+          </div>
+          <div class="form-group">
+            <label for="precio">Precio por pareja <span>*</span></label>
+            <input type="text" id="precio" placeholder="25 €">
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="form-section-title">Detalles adicionales</div>
+        <div class="form-group">
+          <label for="premios">Premios <span>opcional</span></label>
+          <input type="text" id="premios" placeholder="Trofeos, material deportivo, sorteos...">
+        </div>
+        <div class="form-group">
+          <label for="patrocinadores">Patrocinadores <span>opcional</span></label>
+          <input type="text" id="patrocinadores" placeholder="Fit Point, PadelHouse...">
+        </div>
+        <div class="form-group">
+          <label for="enlace">Enlace de inscripción <span>Sportelia, Playtomic...</span></label>
+          <input type="url" id="enlace" placeholder="https://sportelia.com/...">
+        </div>
+        <div class="form-group">
+          <label for="notas">Información extra <span>opcional</span></label>
+          <textarea id="notas" placeholder="Horarios, normas especiales, aforo máximo..."></textarea>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="form-section-title">Tono de comunicación</div>
+        <div class="tono-grid">
+          <div><input class="tono-opt" type="radio" name="tono" id="t1" value="cercano" checked><label class="tono-label" for="t1"><span class="tono-emoji">😊</span>Cercano</label></div>
+          <div><input class="tono-opt" type="radio" name="tono" id="t2" value="profesional"><label class="tono-label" for="t2"><span class="tono-emoji">💼</span>Profesional</label></div>
+          <div><input class="tono-opt" type="radio" name="tono" id="t3" value="deportivo"><label class="tono-label" for="t3"><span class="tono-emoji">⚡</span>Deportivo</label></div>
+          <div><input class="tono-opt" type="radio" name="tono" id="t4" value="urgente"><label class="tono-label" for="t4"><span class="tono-emoji">🔥</span>Urgente</label></div>
+          <div><input class="tono-opt" type="radio" name="tono" id="t5" value="premium"><label class="tono-label" for="t5"><span class="tono-emoji">✨</span>Premium</label></div>
+          <div><input class="tono-opt" type="radio" name="tono" id="t6" value="juvenil"><label class="tono-label" for="t6"><span class="tono-emoji">🎉</span>Juvenil</label></div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="form-section-title">Contenidos a generar</div>
+        <div class="contenidos-grid">
+          <div><input class="cont-opt" type="checkbox" id="c1" value="instagram" checked><label class="cont-label" for="c1"><span class="cont-check"></span>Post Instagram</label></div>
+          <div><input class="cont-opt" type="checkbox" id="c2" value="whatsapp" checked><label class="cont-label" for="c2"><span class="cont-check"></span>Mensaje WhatsApp</label></div>
+          <div><input class="cont-opt" type="checkbox" id="c3" value="story" checked><label class="cont-label" for="c3"><span class="cont-check"></span>Story de apertura</label></div>
+          <div><input class="cont-opt" type="checkbox" id="c4" value="plazas" checked><label class="cont-label" for="c4"><span class="cont-check"></span>Últimas plazas</label></div>
+          <div><input class="cont-opt" type="checkbox" id="c5" value="cuadros"><label class="cont-label" for="c5"><span class="cont-check"></span>Cuadros publicados</label></div>
+          <div><input class="cont-opt" type="checkbox" id="c6" value="campeones"><label class="cont-label" for="c6"><span class="cont-check"></span>Post campeones</label></div>
+          <div><input class="cont-opt" type="checkbox" id="c7" value="reel"><label class="cont-label" for="c7"><span class="cont-check"></span>Guion para reel</label></div>
+          <div><input class="cont-opt" type="checkbox" id="c8" value="agradecimiento"><label class="cont-label" for="c8"><span class="cont-check"></span>Agradecimiento final</label></div>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-gen" id="genBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
+        <span class="btn-text">Generar pack completo →</span>
+      </button>
+    </form>
+  </div>
+
+  <div class="gen-result-col">
+    <div class="result-header">
+      <div class="result-title">Pack de comunicación</div>
+    </div>
+    <div id="resultEmpty" class="result-empty">
+      <div class="result-empty-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+      </div>
+      <div class="result-empty-title">Aquí aparecerá tu pack</div>
+      <div class="result-empty-body">Rellena el formulario de la izquierda<br>y pulsa «Generar pack completo».</div>
+    </div>
+    <div id="resultCards" class="result-cards" style="display:none"></div>
+    <div id="resultActions" class="result-actions" style="display:none">
+      <button class="btn-sec" id="copyAll">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        Copiar todo
+      </button>
+      <button class="btn-sec" id="newPack">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-5"/></svg>
+        Nuevo pack
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="copied-toast" id="toast">Copiado al portapapeles</div>
+
+<script>
+  const LABELS = {
+    instagram: 'Post Instagram', whatsapp: 'Mensaje WhatsApp', story: 'Story de apertura',
+    plazas: 'Últimas plazas', cuadros: 'Cuadros publicados', campeones: 'Post campeones',
+    reel: 'Guion para reel', agradecimiento: 'Agradecimiento final'
+  };
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg || 'Copiado al portapapeles';
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2200);
+  }
+
+  function copyText(text) {
+    navigator.clipboard.writeText(text).then(() => showToast());
+  }
+
+  function parseResponse(text) {
+    const results = {};
+    const regex = /\[TIPO:\s*([^\]]+)\]([\s\S]*?)\[\/TIPO\]/g;
+    let match;
+    while ((match = regex.exec(text)) !== null) {
+      results[match[1].trim()] = match[2].trim();
+    }
+    return results;
+  }
+
+  function renderCards(parsed, contenidos) {
+    const container = document.getElementById('resultCards');
+    container.innerHTML = '';
+    contenidos.forEach(c => {
+      const label = LABELS[c];
+      const content = parsed[label] || parsed[c] || Object.values(parsed)[Object.keys(parsed).indexOf(label)] || '';
+      if (!content) return;
+      const card = document.createElement('div');
+      card.className = 'rc';
+      card.innerHTML = `
+        <div class="rc-header">
+          <span class="rc-tag">${label}</span>
+          <button class="rc-copy" onclick="copyText(this.closest('.rc').querySelector('.rc-body').textContent.trim())">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            Copiar
+          </button>
+        </div>
+        <div class="rc-body">${content}</div>`;
+      container.appendChild(card);
+    });
+  }
+
+  document.getElementById('genForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = document.getElementById('genBtn');
+    btn.classList.add('loading');
+    btn.disabled = true;
+
+    const contenidos = [...document.querySelectorAll('.cont-opt:checked')].map(el => el.value);
+    const tono = document.querySelector('.tono-opt:checked')?.value || 'cercano';
+    const fechaInicio = document.getElementById('fecha_inicio').value;
+    const fechaFin = document.getElementById('fecha_fin').value;
+    const fecha = fechaFin ? `${fechaInicio} al ${fechaFin}` : fechaInicio;
+
+    const data = {
+      club: document.getElementById('club').value,
+      torneo: document.getElementById('torneo').value,
+      fecha, categorias: document.getElementById('categorias').value,
+      precio: document.getElementById('precio').value,
+      premios: document.getElementById('premios').value,
+      patrocinadores: document.getElementById('patrocinadores').value,
+      enlace: document.getElementById('enlace').value,
+      notas: document.getElementById('notas').value,
+      tono, contenidos
+    };
+
+    document.getElementById('resultEmpty').style.display = 'none';
+    document.getElementById('resultCards').style.display = 'none';
+    document.getElementById('resultActions').style.display = 'none';
+
+    try {
+      const response = await fetch('/api/generar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || 'Error al generar');
+      const text = result.content || '';
+      const parsed = parseResponse(text);
+      renderCards(parsed, contenidos);
+      document.getElementById('resultCards').style.display = 'flex';
+      document.getElementById('resultActions').style.display = 'flex';
+    } catch (err) {
+      document.getElementById('resultEmpty').style.display = 'block';
+      document.getElementById('resultEmpty').querySelector('.result-empty-title').textContent = 'Error al generar';
+      document.getElementById('resultEmpty').querySelector('.result-empty-body').textContent = 'Revisa tu conexión e inténtalo de nuevo.';
+    } finally {
+      btn.classList.remove('loading');
+      btn.disabled = false;
+    }
+  });
+
+  document.getElementById('copyAll').addEventListener('click', () => {
+    const texts = [...document.querySelectorAll('.rc-body')].map((el, i) => {
+      const label = el.closest('.rc').querySelector('.rc-tag').textContent;
+      return `=== ${label} ===\n${el.textContent.trim()}`;
+    }).join('\n\n');
+    copyText(texts);
+    showToast('Todo el pack copiado');
+  });
+
+  document.getElementById('newPack').addEventListener('click', () => {
+    document.getElementById('resultCards').style.display = 'none';
+    document.getElementById('resultActions').style.display = 'none';
+    document.getElementById('resultEmpty').style.display = 'block';
+    document.getElementById('resultEmpty').querySelector('.result-empty-title').textContent = 'Aquí aparecerá tu pack';
+    document.getElementById('resultEmpty').querySelector('.result-empty-body').textContent = 'Rellena el formulario de la izquierda\ny pulsa «Generar pack completo».';
+    document.getElementById('genForm').reset();
+  });
+</script>
+</body>
+</html>
