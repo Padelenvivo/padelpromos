@@ -92,6 +92,12 @@
     .btn-share:hover { background: var(--gl); color: var(--gd); }
     .btn-share svg { width: 14px; height: 14px; flex-shrink: 0; }
     .btn-share[disabled] { opacity: .55; cursor: default; }
+    .tcal-wrap { position: relative; }
+    .tcal-menu { position: absolute; right: 0; top: calc(100% + 6px); background: var(--bg); border: 0.5px solid var(--border2); border-radius: var(--radius); box-shadow: 0 10px 28px rgba(15,30,20,.14); padding: 6px; min-width: 200px; z-index: 30; display: none; flex-direction: column; gap: 2px; }
+    .tcal-menu.open { display: flex; }
+    .tcal-menu a, .tcal-menu button { display: flex; align-items: center; gap: 9px; padding: 9px 10px; border-radius: 8px; font-size: 13px; color: var(--text2); text-decoration: none; background: none; border: none; cursor: pointer; font-family: 'DM Sans', sans-serif; text-align: left; width: 100%; }
+    .tcal-menu a:hover, .tcal-menu button:hover { background: var(--bg2); color: var(--text); }
+    .tcal-menu svg { width: 15px; height: 15px; flex-shrink: 0; color: var(--g); }
 
     .empty { text-align: center; padding: 64px 20px; color: var(--text2); }
     .empty svg { width: 40px; height: 40px; color: var(--gm); margin-bottom: 14px; }
@@ -326,11 +332,142 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5 15.4 17.5M15.4 6.5 8.6 10.5"/></svg>
             Compartir
           </button>
+          <div class="tcal-wrap">
+            <button type="button" class="btn-share" data-cal-toggle="${idx}">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+              Recordar
+            </button>
+            <div class="tcal-menu" data-cal-menu="${idx}">
+              <a href="${escAttr(urlGoogleCalendar(t))}" target="_blank" rel="noopener">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+                Google Calendar
+              </a>
+              <button type="button" data-cal-ics="${idx}">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0 4-4m-4 4-4-4M4 19h16"/></svg>
+                Apple / Outlook (.ics)
+              </button>
+            </div>
+          </div>
         </div>
       `;
       list.appendChild(card);
     });
   }
+
+  // ── RECORDAR: añadir torneo al calendario ───────────────────
+  function fechaICS(d) {
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${y}${m}${day}`;
+  }
+
+  function sumarDias(d, n) {
+    const r = new Date(d);
+    r.setDate(r.getDate() + n);
+    return r;
+  }
+
+  function eventoCalendario(t) {
+    const fi = parseFecha(t.fecha_inicio);
+    const ff = parseFecha(t.fecha_fin) || fi;
+    if (!fi) return null;
+    const dtStart = fechaICS(fi);
+    const dtEnd = fechaICS(sumarDias(ff, 1)); // fin exclusivo (estándar para eventos de día completo)
+
+    const partes = [];
+    if (t.club) partes.push(`Club: ${t.club}`);
+    if (t.categorias) partes.push(`Categorías: ${t.categorias}`);
+    if (t.precio) partes.push(`Precio: ${t.precio}`);
+    if (t.enlace) partes.push(`Inscripciones: ${t.enlace}`);
+    partes.push('Más información en https://www.padelpromos.es/agenda.html');
+
+    return {
+      titulo: t.torneo || 'Torneo de pádel',
+      dtStart, dtEnd,
+      descripcion: partes.join('\n'),
+      ubicacion: t.ciudad || ''
+    };
+  }
+
+  function escapeICS(s) {
+    return String(s || '')
+      .replace(/\\/g, '\\\\')
+      .replace(/;/g, '\\;')
+      .replace(/,/g, '\\,')
+      .replace(/\n/g, '\\n');
+  }
+
+  function descargarICS(t) {
+    const ev = eventoCalendario(t);
+    if (!ev) return;
+    const stamp = new Date().toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+    const uid = `${slugTorneo(t.torneo)}-${ev.dtStart}@padelpromos.es`;
+    const ics = [
+      'BEGIN:VCALENDAR',
+      'VERSION:2.0',
+      'PRODID:-//PadelPromos//Agenda de Torneos//ES',
+      'CALSCALE:GREGORIAN',
+      'BEGIN:VEVENT',
+      `UID:${uid}`,
+      `DTSTAMP:${stamp}`,
+      `DTSTART;VALUE=DATE:${ev.dtStart}`,
+      `DTEND;VALUE=DATE:${ev.dtEnd}`,
+      `SUMMARY:${escapeICS(ev.titulo)}`,
+      `DESCRIPTION:${escapeICS(ev.descripcion)}`,
+      ev.ubicacion ? `LOCATION:${escapeICS(ev.ubicacion)}` : '',
+      'END:VEVENT',
+      'END:VCALENDAR'
+    ].filter(Boolean).join('\r\n');
+
+    const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${slugTorneo(t.torneo)}.ics`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 5000);
+  }
+
+  function urlGoogleCalendar(t) {
+    const ev = eventoCalendario(t);
+    if (!ev) return '#';
+    const params = new URLSearchParams({
+      action: 'TEMPLATE',
+      text: ev.titulo,
+      dates: `${ev.dtStart}/${ev.dtEnd}`,
+      details: ev.descripcion,
+      location: ev.ubicacion
+    });
+    return `https://calendar.google.com/calendar/render?${params.toString()}`;
+  }
+
+  document.addEventListener('click', (e) => {
+    const toggle = e.target.closest('[data-cal-toggle]');
+    const icsBtn = e.target.closest('[data-cal-ics]');
+    const dentroDelMenu = e.target.closest('.tcal-menu');
+
+    if (toggle) {
+      const idx = toggle.dataset.calToggle;
+      const menu = document.querySelector(`[data-cal-menu="${idx}"]`);
+      const abierto = menu && menu.classList.contains('open');
+      document.querySelectorAll('.tcal-menu.open').forEach(m => m.classList.remove('open'));
+      if (menu && !abierto) menu.classList.add('open');
+      return;
+    }
+    if (icsBtn) {
+      const idx = Number(icsBtn.dataset.calIcs);
+      const t = AGENDA_ITEMS[idx];
+      if (t) descargarICS(t);
+      document.querySelectorAll('.tcal-menu.open').forEach(m => m.classList.remove('open'));
+      return;
+    }
+    if (!dentroDelMenu) {
+      document.querySelectorAll('.tcal-menu.open').forEach(m => m.classList.remove('open'));
+    }
+  });
 
   // ── COMPARTIR: generación de imagen para redes ──────────────
   function textoFechasCompartir(t) {
