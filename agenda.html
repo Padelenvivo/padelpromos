@@ -113,6 +113,19 @@
     .empty svg { width: 40px; height: 40px; color: var(--gm); margin-bottom: 14px; }
     .empty p { font-size: 14px; max-width: 380px; margin: 0 auto; line-height: 1.65; }
 
+    /* RESOURCE / CHECKLIST SECTION */
+    .resource { background: var(--bg); border-top: 0.5px solid var(--border2); padding: 64px 40px; }
+    .resource-inner { max-width: 920px; margin: 0 auto; display: flex; align-items: center; gap: 36px; background: var(--bg2); border: 0.5px solid var(--border2); border-radius: var(--radius-lg); padding: 38px 42px; }
+    .resource-icon { flex-shrink: 0; width: 68px; height: 68px; border-radius: var(--radius-lg); background: var(--gl); border: 0.5px solid var(--gm); display: flex; align-items: center; justify-content: center; }
+    .resource-icon svg { width: 30px; height: 30px; color: var(--g); }
+    .resource-text h2 { font-family: 'DM Serif Display', serif; font-size: 24px; font-weight: 400; color: var(--text); margin-bottom: 8px; letter-spacing: -.2px; }
+    .resource-text p { font-size: 14px; color: var(--text2); line-height: 1.7; margin-bottom: 18px; max-width: 560px; }
+    .resource-actions a { display: inline-flex; align-items: center; gap: 8px; }
+    @media (max-width: 760px) {
+      .resource-inner { flex-direction: column; text-align: center; padding: 32px 24px; }
+      .resource-text p { max-width: 100%; }
+    }
+
     /* PUBLISH SECTION */
     .publish { background: var(--bg2); border-top: 0.5px solid var(--border2); padding: 72px 40px; }
     .publish-inner { max-width: 640px; margin: 0 auto; text-align: center; }
@@ -194,6 +207,24 @@
     <p>Todavía no hay torneos publicados que coincidan. Si organizas uno, ¡publícalo aquí abajo y aparecerá en la agenda!</p>
   </div>
 </div>
+
+<section class="resource">
+  <div class="resource-inner">
+    <div class="resource-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M9 13h6M9 17h6M9 9h2"/></svg>
+    </div>
+    <div class="resource-text">
+      <h2>Guía gratuita: cómo organizar un torneo de pádel de éxito</h2>
+      <p>Una checklist paso a paso —desde la planificación inicial hasta el día después del torneo— para que no se te escape ningún detalle. Pensada para clubes, hoteles y organizadores que quieren que la gente repita.</p>
+      <div class="resource-actions">
+        <a class="btn btn-ghost" href="checklist-organizar-torneo-padel.pdf" download>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Descargar checklist en PDF
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
 
 <section class="publish">
   <div class="publish-inner">
