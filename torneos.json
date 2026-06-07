@@ -11,6 +11,39 @@
       "precio": "30 € por pareja",
       "enlace": "https://www.padelpromos.es",
       "publicado": false
+    },
+    {
+      "club": "Circuito Pádel Prinsotel",
+      "torneo": "6ª Prueba — Circuito Pádel Prinsotel 2026",
+      "fecha_inicio": "2026-06-18",
+      "fecha_fin": "2026-06-21",
+      "ciudad": "Mallorca",
+      "categorias": "Masculina 1ª-5ª, Femenina 1ª-5ª, Mixtos B-C-D",
+      "precio": "25 € una categoría / 45 € dos categorías",
+      "enlace": "https://torneos.sportelia.es/#/tournaments-details/-OsFFvMg1r8lAXt4oV8-/public",
+      "publicado": true
+    },
+    {
+      "club": "Hotel Caprice Vell Mari",
+      "torneo": "Torneo Pádel + Hotel — Can Picafort",
+      "fecha_inicio": "2026-06-19",
+      "fecha_fin": "2026-06-21",
+      "ciudad": "Can Picafort, Mallorca",
+      "categorias": "Masculina 2ª-4ª, Femenina 3ª-4ª, Mixtos C",
+      "precio": "25 € (solo 1 categoría)",
+      "enlace": "https://torneos.sportelia.es/#/tournaments-details/-OkZZK5DhY9nBAnnJaLb/public",
+      "publicado": true
+    },
+    {
+      "club": "Circuito Pádel Prinsotel",
+      "torneo": "7ª Prueba — Circuito Pádel Prinsotel 2026",
+      "fecha_inicio": "2026-07-16",
+      "fecha_fin": "2026-07-19",
+      "ciudad": "Mallorca",
+      "categorias": "Masculina 1ª-5ª, Femenina 1ª-5ª, Mixtos B-C-D",
+      "precio": "25 € una categoría / 45 € dos categorías",
+      "enlace": "",
+      "publicado": true
     }
   ]
 }
