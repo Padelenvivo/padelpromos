@@ -1,0 +1,29 @@
+{
+  "_instrucciones": "Edita esta lista para gestionar el Archivo de Resultados (torneos ya finalizados). Cada entrada necesita: club, torneo, fecha (AAAA-MM-DD, fecha de finalización del torneo), ciudad, ganadores (lista de objetos con 'categoria' y 'pareja'), y publicado (true/false). 'imagen' es opcional (cartel o foto del torneo/entrega de premios). Esta página da contenido de valor para SEO y demuestra que los torneos publicados en PadelPromos son reales — anímate a publicar los resultados en cuanto termine cada torneo. Las dos primeras entradas son solo demostraciones: sustitúyelas por resultados reales o ponlas en publicado=false.",
+  "resultados": [
+    {
+      "club": "Club Pádel Demo",
+      "torneo": "Torneo de ejemplo — sustituye esta entrada",
+      "fecha": "2026-04-05",
+      "ciudad": "Tu ciudad",
+      "ganadores": [
+        { "categoria": "Mixta B", "pareja": "Nombre Apellido / Nombre Apellido" },
+        { "categoria": "Mixta C", "pareja": "Nombre Apellido / Nombre Apellido" }
+      ],
+      "publicado": false
+    },
+    {
+      "club": "Circuito Pádel Prinsotel",
+      "torneo": "5ª Prueba — Circuito Pádel Prinsotel 2026",
+      "fecha": "2026-05-17",
+      "ciudad": "Mallorca",
+      "ganadores": [
+        { "categoria": "Masculina 1ª", "pareja": "J. García / M. Soler" },
+        { "categoria": "Femenina 1ª", "pareja": "L. Fernández / A. Ramis" },
+        { "categoria": "Mixtos B", "pareja": "P. Vidal / C. Bauzá" }
+      ],
+      "imagen": "carteles/cartel-prinsotel-6.jpg",
+      "publicado": true
+    }
+  ]
+}

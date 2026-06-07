@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Resultados de Torneos — PadelPromos</title>
+  <meta name="description" content="Consulta los ganadores y resultados de los últimos torneos de pádel publicados en PadelPromos: campeones por categoría, clubes organizadores y fechas.">
+  <meta property="og:title" content="Resultados de Torneos — PadelPromos">
+  <meta property="og:description" content="Campeones y resultados de los torneos de pádel ya disputados.">
+  <meta property="og:url" content="https://padelpromos.es/resultados.html">
+  <link rel="canonical" href="https://padelpromos.es/resultados.html">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500&family=DM+Serif+Display&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --g: #1D9E75;
+      --gd: #0F6E56;
+      --gl: #E1F5EE;
+      --gm: #9FE1CB;
+      --text: #0f1a14;
+      --text2: #4a5e54;
+      --text3: #8aa096;
+      --bg: #ffffff;
+      --bg2: #f5faf7;
+      --bg3: #edf6f1;
+      --border: rgba(29,158,117,.15);
+      --border2: rgba(29,158,117,.3);
+      --radius: 10px;
+      --radius-lg: 14px;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'DM Sans', sans-serif; color: var(--text); background: var(--bg); line-height: 1.6; -webkit-font-smoothing: antialiased; }
+
+    /* NAV */
+    nav { position: sticky; top: 0; z-index: 100; background: rgba(255,255,255,.92); backdrop-filter: blur(12px); border-bottom: 0.5px solid var(--border2); padding: 0 40px; display: flex; align-items: center; justify-content: space-between; height: 60px; }
+    .nav-logo { font-size: 17px; font-weight: 500; color: var(--text); text-decoration: none; }
+    .nav-logo b { color: var(--g); font-weight: 500; }
+    .nav-links { display: flex; gap: 28px; list-style: none; }
+    .nav-links a { font-size: 14px; color: var(--text2); text-decoration: none; transition: color .2s; }
+    .nav-links a:hover, .nav-links a.active { color: var(--text); }
+    .nav-cta { display: inline-flex; align-items: center; gap: 6px; padding: 9px 20px; background: var(--g); color: #fff; border-radius: var(--radius); font-size: 13px; font-weight: 500; text-decoration: none; transition: background .2s, transform .15s; }
+    .nav-cta:hover { background: var(--gd); transform: translateY(-1px); }
+
+    /* BTN */
+    .btn { display: inline-flex; align-items: center; gap: 8px; padding: 13px 28px; background: var(--g); color: #fff; border: none; border-radius: var(--radius); font-size: 15px; font-weight: 500; text-decoration: none; cursor: pointer; transition: background .2s, transform .15s; font-family: 'DM Sans', sans-serif; }
+    .btn:hover { background: var(--gd); transform: translateY(-1px); }
+    .btn-ghost { background: transparent; color: var(--g); border: 1.5px solid var(--g); }
+    .btn-ghost:hover { background: var(--gl); }
+
+    /* HERO */
+    .hero { padding: 72px 40px 56px; text-align: center; border-bottom: 0.5px solid var(--border2); background: var(--bg); position: relative; overflow: hidden; }
+    .hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 70% 50% at 50% 0%, rgba(29,158,117,.07) 0%, transparent 70%); pointer-events: none; }
+    .hero-eyebrow { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; color: var(--gd); background: var(--gl); padding: 5px 14px; border-radius: 20px; margin-bottom: 20px; border: 0.5px solid var(--gm); position: relative; }
+    h1 { font-family: 'DM Serif Display', serif; font-size: 44px; line-height: 1.15; letter-spacing: -.5px; color: var(--text); margin-bottom: 16px; font-weight: 400; position: relative; }
+    h1 .hl { color: var(--g); font-style: italic; }
+    .hero-sub { font-size: 16px; color: var(--text2); line-height: 1.65; max-width: 540px; margin: 0 auto; position: relative; }
+
+    /* RESULTS SECTION */
+    .res-wrap { max-width: 920px; margin: 0 auto; padding: 56px 40px 80px; }
+    .res-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 28px; flex-wrap: wrap; }
+    .res-count { font-size: 13px; color: var(--text3); }
+
+    .rcard { background: var(--bg); border: 0.5px solid var(--border2); border-radius: var(--radius-lg); padding: 24px 26px; margin-bottom: 16px; display: flex; gap: 22px; align-items: flex-start; transition: border-color .2s, transform .15s; }
+    .rcard:hover { border-color: var(--g); transform: translateY(-2px); }
+    .rposter { flex-shrink: 0; width: 64px; height: 88px; border-radius: var(--radius); overflow: hidden; border: 0.5px solid var(--border2); background: var(--bg3); }
+    .rposter img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .rbody { flex: 1; min-width: 0; }
+    .rtitle { font-size: 17px; font-weight: 500; color: var(--text); margin-bottom: 3px; }
+    .rmeta { font-size: 13px; color: var(--text2); margin-bottom: 14px; display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; }
+    .rmeta svg { width: 13px; height: 13px; color: var(--g); flex-shrink: 0; vertical-align: -2px; margin-right: 3px; }
+    .rwinners { display: flex; flex-direction: column; gap: 8px; }
+    .rwinner { display: flex; align-items: baseline; gap: 10px; font-size: 14px; flex-wrap: wrap; }
+    .rwinner .rcup { flex-shrink: 0; display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 600; color: #92660A; background: #FFF1D6; border: 0.5px solid #EFCF8F; padding: 4px 10px; border-radius: 20px; }
+    .rwinner .rcup svg { width: 11px; height: 11px; fill: #D6A331; flex-shrink: 0; }
+    .rwinner .rpair { color: var(--text); font-weight: 500; }
+
+    .empty { text-align: center; padding: 64px 20px; color: var(--text2); }
+    .empty svg { width: 40px; height: 40px; color: var(--gm); margin-bottom: 14px; }
+    .empty p { font-size: 14px; max-width: 380px; margin: 0 auto; line-height: 1.65; }
+
+    /* SUBMIT CTA */
+    .submit-cta { background: var(--bg); border-top: 0.5px solid var(--border2); padding: 64px 40px; }
+    .submit-inner { max-width: 920px; margin: 0 auto; text-align: center; background: var(--bg2); border: 0.5px solid var(--border2); border-radius: var(--radius-lg); padding: 40px 42px; }
+    .submit-inner h2 { font-family: 'DM Serif Display', serif; font-size: 24px; font-weight: 400; margin-bottom: 10px; }
+    .submit-inner p { font-size: 14px; color: var(--text2); max-width: 540px; margin: 0 auto 22px; line-height: 1.65; }
+
+    /* FOOTER */
+    footer { padding: 28px 40px; border-top: 0.5px solid var(--border2); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px; }
+    .footer-logo { font-size: 15px; font-weight: 500; color: var(--text); text-decoration: none; }
+    .footer-logo b { color: var(--g); font-weight: 500; }
+    .footer-links { display: flex; gap: 24px; list-style: none; }
+    .footer-links a { font-size: 12px; color: var(--text3); text-decoration: none; transition: color .2s; }
+    .footer-links a:hover { color: var(--text); }
+    .footer-copy { font-size: 12px; color: var(--text3); }
+
+    @media (max-width: 760px) {
+      nav { padding: 0 20px; }
+      .nav-links { display: none; }
+      .hero { padding: 52px 20px 40px; }
+      h1 { font-size: 32px; }
+      .res-wrap { padding: 40px 20px 60px; }
+      .rcard { flex-direction: column; }
+      .rposter { width: 100%; height: 140px; }
+      .submit-cta { padding: 48px 20px; }
+      footer { padding: 22px 20px; flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="nav-logo">Padel<b>Promos</b></a>
+  <ul class="nav-links">
+    <li><a href="/#como-funciona">Cómo funciona</a></li>
+    <li><a href="agenda.html">Agenda de torneos</a></li>
+    <li><a href="resultados.html" class="active">Resultados</a></li>
+    <li><a href="precios.html">Precios</a></li>
+  </ul>
+  <a href="generador.html" class="nav-cta">Empezar gratis →</a>
+</nav>
+
+<section class="hero">
+  <span class="hero-eyebrow">🏆 Archivo de resultados</span>
+  <h1>Campeones y resultados de torneos <span class="hl">ya disputados</span></h1>
+  <p class="hero-sub">Una crónica de los torneos que han pasado por la agenda de PadelPromos: ganadores por categoría, clubes organizadores y fechas — para que quede constancia de cada cita.</p>
+</section>
+
+<div class="res-wrap">
+  <div class="res-toolbar">
+    <span class="res-count" id="resCount">Cargando resultados…</span>
+  </div>
+
+  <div id="resList"></div>
+
+  <div class="empty" id="resEmpty" style="display:none;">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 21h8M12 17v4M7 4h10v3a5 5 0 0 1-10 0V4z"/><path d="M7 5H4a3 3 0 0 0 3 3M17 5h3a3 3 0 0 1-3 3"/></svg>
+    <p>Todavía no hay resultados publicados. En cuanto termine un torneo de la agenda, publicaremos aquí sus ganadores.</p>
+  </div>
+</div>
+
+<section class="submit-cta">
+  <div class="submit-inner">
+    <h2>¿Acabas de organizar un torneo?</h2>
+    <p>Cuéntanos quiénes fueron los campeones de cada categoría y lo añadimos a este archivo — da visibilidad a los ganadores y demuestra que tu club organiza torneos de verdad.</p>
+    <a class="btn btn-ghost" href="mailto:hola@padelpromos.es?subject=Resultados%20de%20mi%20torneo&body=Hola%2C%0A%0AOs%20paso%20los%20resultados%20de%20nuestro%20torneo%20para%20el%20archivo%20de%20PadelPromos%3A%0A%0AClub%3A%20%0ATorneo%3A%20%0AFecha%3A%20%0AGanadores%20por%20categor%C3%ADa%3A%20%0A-%20%0A-%20%0A%0A%C2%A1Gracias!">Enviar resultados →</a>
+  </div>
+</section>
+
+<footer>
+  <a href="/" class="footer-logo">Padel<b>Promos</b></a>
+  <ul class="footer-links">
+    <li><a href="/#como-funciona">Cómo funciona</a></li>
+    <li><a href="agenda.html">Agenda de torneos</a></li>
+    <li><a href="resultados.html">Resultados</a></li>
+    <li><a href="precios.html">Precios</a></li>
+  </ul>
+  <span class="footer-copy">© 2026 PadelPromos.es</span>
+</footer>
+
+<script>
+  const MESES = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+
+  function fmtFecha(iso) {
+    if (!iso) return '';
+    const [y, m, d] = iso.split('-').map(Number);
+    return `${d} ${MESES[m - 1]} ${y}`;
+  }
+
+  function cupSvg() {
+    return '<svg viewBox="0 0 24 24"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7-6.2-3.7-6.2 3.7 1.6-7L2 9.2l7.1-.6z"/></svg>';
+  }
+
+  function calIcon() {
+    return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>';
+  }
+
+  function pinIcon() {
+    return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-6.1-7-11a7 7 0 0 1 14 0c0 4.9-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>';
+  }
+
+  async function cargarResultados() {
+    const listEl = document.getElementById('resList');
+    const countEl = document.getElementById('resCount');
+    const emptyEl = document.getElementById('resEmpty');
+
+    try {
+      const resp = await fetch('resultados.json?v=1', { cache: 'no-store' });
+      const data = await resp.json();
+      let items = (data.resultados || []).filter(r => r.publicado !== false);
+
+      // Más recientes primero
+      items.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+
+      if (items.length === 0) {
+        countEl.textContent = 'Sin resultados todavía';
+        emptyEl.style.display = 'block';
+        return;
+      }
+
+      countEl.textContent = `${items.length} torneo${items.length === 1 ? '' : 's'} con resultados publicados`;
+
+      listEl.innerHTML = items.map(r => {
+        const poster = r.imagen
+          ? `<div class="rposter"><img src="${r.imagen}" alt="${r.torneo}" loading="lazy"></div>`
+          : '';
+        const ganadores = (r.ganadores || []).map(g => `
+          <div class="rwinner">
+            <span class="rcup">${cupSvg()} ${g.categoria || ''}</span>
+            <span class="rpair">${g.pareja || ''}</span>
+          </div>
+        `).join('');
+
+        return `
+          <div class="rcard">
+            ${poster}
+            <div class="rbody">
+              <div class="rtitle">${r.torneo || ''}</div>
+              <div class="rmeta">
+                <span>${calIcon()} ${fmtFecha(r.fecha)}</span>
+                <span>${pinIcon()} ${r.ciudad || ''} · ${r.club || ''}</span>
+              </div>
+              <div class="rwinners">${ganadores}</div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    } catch (e) {
+      countEl.textContent = '';
+      emptyEl.style.display = 'block';
+    }
+  }
+
+  cargarResultados();
+</script>
+
+</body>
+</html>
