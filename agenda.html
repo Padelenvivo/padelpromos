@@ -120,7 +120,8 @@
     .resource-icon svg { width: 30px; height: 30px; color: var(--g); }
     .resource-text h2 { font-family: 'DM Serif Display', serif; font-size: 24px; font-weight: 400; color: var(--text); margin-bottom: 8px; letter-spacing: -.2px; }
     .resource-text p { font-size: 14px; color: var(--text2); line-height: 1.7; margin-bottom: 18px; max-width: 560px; }
-    .resource-actions a { display: inline-flex; align-items: center; gap: 8px; }
+    .resource-actions a { display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; }
+    .resource-actions a svg { width: 17px; height: 17px; flex-shrink: 0; }
     @media (max-width: 760px) {
       .resource-inner { flex-direction: column; text-align: center; padding: 32px 24px; }
       .resource-text p { max-width: 100%; }
