@@ -6,5 +6,11 @@
         { "key": "Content-Type", "value": "text/html; charset=utf-8" }
       ]
     }
+  ],
+  "crons": [
+    {
+      "path": "/api/newsletter-semanal",
+      "schedule": "0 8 * * 1"
+    }
   ]
 }
