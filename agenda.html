@@ -77,10 +77,21 @@
     .tbody { flex: 1; min-width: 0; }
     .ttitle { font-size: 16px; font-weight: 500; color: var(--text); margin-bottom: 3px; }
     .tclub { font-size: 13px; color: var(--text2); margin-bottom: 8px; }
+    .tcountdown { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 20px; margin-bottom: 8px; }
+    .tcountdown.cd-normal { background: var(--bg3); color: var(--text2); }
+    .tcountdown.cd-soon { background: #FEF3E0; color: #B7791F; }
+    .tcountdown.cd-live { background: #FCE8E6; color: #C0392B; }
+    .tcountdown svg { width: 11px; height: 11px; flex-shrink: 0; }
+    .tcountdown-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
     .tmeta { display: flex; flex-wrap: wrap; gap: 8px; }
     .tpill { font-size: 11px; color: var(--text2); background: var(--bg2); border: 0.5px solid var(--border2); padding: 4px 10px; border-radius: 20px; display: inline-flex; align-items: center; gap: 4px; }
     .tpill svg { width: 12px; height: 12px; color: var(--g); flex-shrink: 0; }
     .tlink { flex-shrink: 0; }
+    .tactions { flex-shrink: 0; display: flex; flex-direction: column; gap: 8px; align-items: stretch; }
+    .btn-share { display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 9px 16px; background: var(--bg2); color: var(--text2); border: 0.5px solid var(--border2); border-radius: var(--radius); font-size: 13px; font-weight: 500; text-decoration: none; cursor: pointer; transition: background .2s, color .2s; font-family: 'DM Sans', sans-serif; white-space: nowrap; }
+    .btn-share:hover { background: var(--gl); color: var(--gd); }
+    .btn-share svg { width: 14px; height: 14px; flex-shrink: 0; }
+    .btn-share[disabled] { opacity: .55; cursor: default; }
 
     .empty { text-align: center; padding: 64px 20px; color: var(--text2); }
     .empty svg { width: 40px; height: 40px; color: var(--gm); margin-bottom: 14px; }
@@ -212,12 +223,39 @@
   // ---------- Cargar y pintar la agenda ----------
   const MESES = ['ENE','FEB','MAR','ABR','MAY','JUN','JUL','AGO','SEP','OCT','NOV','DIC'];
   let TORNEOS = [];
+  let AGENDA_ITEMS = [];
 
   function parseFecha(s) {
     if (!s) return null;
     const m = String(s).match(/^(\d{4})-(\d{2})-(\d{2})/);
     if (!m) return null;
     return new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
+  }
+
+  function cuentaAtras(t, hoy) {
+    const fi = parseFecha(t.fecha_inicio);
+    const ff = parseFecha(t.fecha_fin) || fi;
+    if (!fi || !ff) return '';
+    const msDia = 24 * 60 * 60 * 1000;
+    const diasInicio = Math.round((fi - hoy) / msDia);
+    const diasFin = Math.round((ff - hoy) / msDia);
+
+    if (diasInicio <= 0 && diasFin >= 0) {
+      return `<span class="tcountdown cd-live"><span class="tcountdown-dot"></span>En curso ahora</span>`;
+    }
+    if (diasInicio === 0) {
+      return `<span class="tcountdown cd-soon"><span class="tcountdown-dot"></span>¡Empieza hoy!</span>`;
+    }
+    if (diasInicio === 1) {
+      return `<span class="tcountdown cd-soon"><span class="tcountdown-dot"></span>Empieza mañana</span>`;
+    }
+    if (diasInicio > 1 && diasInicio <= 7) {
+      return `<span class="tcountdown cd-soon"><span class="tcountdown-dot"></span>Quedan ${diasInicio} días</span>`;
+    }
+    if (diasInicio > 7) {
+      return `<span class="tcountdown cd-normal"><span class="tcountdown-dot"></span>Quedan ${diasInicio} días</span>`;
+    }
+    return '';
   }
 
   function renderAgenda(filtro) {
@@ -242,6 +280,7 @@
       );
     }
 
+    AGENDA_ITEMS = items;
     list.innerHTML = '';
     if (!items.length) {
       empty.style.display = 'block';
@@ -251,10 +290,11 @@
     empty.style.display = 'none';
     count.textContent = `${items.length} torneo${items.length === 1 ? '' : 's'} próximo${items.length === 1 ? '' : 's'}`;
 
-    items.forEach(t => {
+    items.forEach((t, idx) => {
       const f = t._fecha;
       const card = document.createElement('div');
       card.className = 'tcard';
+      card.dataset.idx = String(idx);
 
       const pills = [];
       if (t.ciudad) pills.push(`<span class="tpill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 12-9 12s-9-5-9-12a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>${esc(t.ciudad)}</span>`);
@@ -275,15 +315,236 @@
           <div class="tdate-month">${MESES[(parseFecha(t.fecha_inicio) || f).getMonth()]}</div>
         </div>
         <div class="tbody">
+          ${cuentaAtras(t, hoy)}
           <div class="ttitle">${esc(t.torneo || 'Torneo de pádel')}</div>
           <div class="tclub">${esc(t.club || '')}${t.club ? ' · ' : ''}${esc(fechaTxt)}</div>
           <div class="tmeta">${pills.join('')}</div>
         </div>
-        ${t.enlace ? `<div class="tlink"><a class="btn btn-ghost" href="${escAttr(t.enlace)}" target="_blank" rel="noopener">Inscribirse →</a></div>` : ''}
+        <div class="tactions">
+          ${t.enlace ? `<a class="btn btn-ghost" href="${escAttr(t.enlace)}" target="_blank" rel="noopener">Inscribirse →</a>` : ''}
+          <button type="button" class="btn-share" data-share-idx="${idx}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5 15.4 17.5M15.4 6.5 8.6 10.5"/></svg>
+            Compartir
+          </button>
+        </div>
       `;
       list.appendChild(card);
     });
   }
+
+  // ── COMPARTIR: generación de imagen para redes ──────────────
+  function textoFechasCompartir(t) {
+    const fi = parseFecha(t.fecha_inicio);
+    const ff = parseFecha(t.fecha_fin);
+    if (!fi) return '';
+    if (ff && t.fecha_inicio !== t.fecha_fin) {
+      if (fi.getMonth() === ff.getMonth()) {
+        return `${fi.getDate()} – ${ff.getDate()} ${MESES[ff.getMonth()]} ${ff.getFullYear()}`;
+      }
+      return `${fi.getDate()} ${MESES[fi.getMonth()]} – ${ff.getDate()} ${MESES[ff.getMonth()]} ${ff.getFullYear()}`;
+    }
+    return `${fi.getDate()} ${MESES[fi.getMonth()]} ${fi.getFullYear()}`;
+  }
+
+  function roundRectShare(ctx, x, y, w, h, r) {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.lineTo(x + w - r, y);
+    ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+    ctx.lineTo(x + w, y + h - r);
+    ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+    ctx.lineTo(x + r, y + h);
+    ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+    ctx.lineTo(x, y + r);
+    ctx.quadraticCurveTo(x, y, x + r, y);
+    ctx.closePath();
+  }
+
+  function wrapLinesShare(ctx, text, maxWidth) {
+    const words = String(text || '').split(' ');
+    const result = [];
+    let line = '';
+    for (const word of words) {
+      const test = line ? line + ' ' + word : word;
+      if (ctx.measureText(test).width > maxWidth && line) {
+        result.push(line);
+        line = word;
+      } else { line = test; }
+    }
+    if (line) result.push(line);
+    return result;
+  }
+
+  function buildShareCanvas(t) {
+    const W = 1080, H = 1080, PAD = 80;
+    const cv = document.createElement('canvas');
+    cv.width = W; cv.height = H;
+    const ctx = cv.getContext('2d');
+
+    // Fondo degradado de marca
+    const grad = ctx.createLinearGradient(0, 0, W * 0.6, H);
+    grad.addColorStop(0, '#091f12');
+    grad.addColorStop(0.55, '#0F6E56');
+    grad.addColorStop(1, '#1D9E75');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, W, H);
+
+    // Círculos decorativos
+    ctx.save();
+    ctx.globalAlpha = 0.07;
+    ctx.fillStyle = '#ffffff';
+    ctx.beginPath(); ctx.arc(W * 0.9, H * 0.12, 380, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(W * 0.05, H * 0.94, 260, 0, Math.PI * 2); ctx.fill();
+    ctx.restore();
+    ctx.save();
+    ctx.globalAlpha = 0.12;
+    ctx.fillStyle = '#9FE1CB';
+    ctx.beginPath(); ctx.arc(W * 0.12, H * 0.22, 90, 0, Math.PI * 2); ctx.fill();
+    ctx.restore();
+
+    // Marca
+    ctx.textAlign = 'left';
+    ctx.font = `400 30px 'DM Sans', sans-serif`;
+    ctx.fillStyle = 'rgba(255,255,255,0.45)';
+    ctx.fillText('Padel', PAD, 72);
+    const pW = ctx.measureText('Padel').width;
+    ctx.fillStyle = '#9FE1CB';
+    ctx.fillText('Promos', PAD + pW, 72);
+
+    // Etiqueta "agenda de torneos"
+    ctx.font = `500 26px 'DM Sans', sans-serif`;
+    ctx.fillStyle = 'rgba(159,225,203,0.85)';
+    ctx.fillText('📅  AGENDA DE TORNEOS', PAD, 130);
+
+    // Club
+    ctx.font = `500 38px 'DM Sans', sans-serif`;
+    ctx.fillStyle = 'rgba(255,255,255,0.8)';
+    let club = (t.club || '').toUpperCase();
+    while (ctx.measureText(club).width > W - PAD * 2 && club.length > 4) club = club.slice(0, -1);
+    if (club) ctx.fillText(club, PAD, 200);
+
+    // Nombre del torneo
+    ctx.font = `700 62px 'DM Sans', sans-serif`;
+    ctx.fillStyle = '#ffffff';
+    const lines = wrapLinesShare(ctx, t.torneo || 'Torneo de pádel', W - PAD * 2);
+    let ty = club ? 282 : 240;
+    for (const ln of lines.slice(0, 3)) { ctx.fillText(ln, PAD, ty); ty += 74; }
+
+    // Caja de información
+    const boxY = ty + 36;
+    const boxH = Math.min(420, H - boxY - 130);
+    ctx.save();
+    ctx.globalAlpha = 0.12;
+    ctx.fillStyle = '#000';
+    roundRectShare(ctx, PAD - 24, boxY - 30, W - PAD * 2 + 48, boxH, 18);
+    ctx.fill();
+    ctx.restore();
+
+    const info = [];
+    const fechaTxt = textoFechasCompartir(t);
+    if (fechaTxt) info.push(['📅', fechaTxt]);
+    if (t.ciudad) info.push(['📍', t.ciudad]);
+    if (t.categorias) info.push(['🏆', t.categorias]);
+    if (t.precio) info.push(['💶', t.precio]);
+
+    let cy = boxY + 44;
+    const limitY = boxY + boxH - 30;
+    for (const [icon, txt] of info) {
+      if (cy > limitY) break;
+      ctx.font = `400 34px 'DM Sans', sans-serif`;
+      ctx.fillStyle = '#9FE1CB';
+      ctx.fillText(icon, PAD, cy);
+      ctx.fillStyle = 'rgba(255,255,255,0.92)';
+      const wrapped = wrapLinesShare(ctx, txt, W - PAD * 2 - 64);
+      for (const wl of wrapped.slice(0, 2)) {
+        if (cy > limitY) break;
+        ctx.fillText(wl, PAD + 56, cy);
+        cy += 46;
+      }
+      cy += 14;
+    }
+
+    // Pie
+    const botY = H - 80;
+    ctx.strokeStyle = 'rgba(255,255,255,0.18)'; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(PAD, botY - 28); ctx.lineTo(W - PAD, botY - 28); ctx.stroke();
+    ctx.font = `400 26px 'DM Sans', sans-serif`;
+    ctx.fillStyle = 'rgba(255,255,255,0.55)';
+    ctx.textAlign = 'left';
+    const pre = 'Más torneos en  ';
+    ctx.fillText(pre, PAD, botY + 8);
+    ctx.fillStyle = '#9FE1CB';
+    ctx.font = `500 26px 'DM Sans', sans-serif`;
+    ctx.fillText('padelpromos.es/agenda', PAD + ctx.measureText(pre).width, botY + 8);
+
+    return cv;
+  }
+
+  function slugTorneo(s) {
+    return String(s || 'torneo')
+      .toLowerCase()
+      .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-+|-+$)/g, '') || 'torneo';
+  }
+
+  async function compartirTorneo(t) {
+    if (document.fonts && document.fonts.load) {
+      try {
+        await Promise.all([
+          document.fonts.load("700 62px 'DM Sans'"),
+          document.fonts.load("500 38px 'DM Sans'"),
+          document.fonts.load("400 34px 'DM Sans'")
+        ]);
+      } catch (e) {}
+    }
+    const cv = buildShareCanvas(t);
+    const blob = await new Promise(resolve => cv.toBlob(resolve, 'image/png', 0.95));
+    if (!blob) throw new Error('No se pudo generar la imagen');
+
+    const fileName = `${slugTorneo(t.torneo)}-padelpromos.png`;
+    const file = new File([blob], fileName, { type: 'image/png' });
+    const shareText = [
+      `${t.torneo || 'Torneo de pádel'}${t.club ? ' — ' + t.club : ''}`,
+      t.ciudad ? `📍 ${t.ciudad}` : '',
+      t.enlace ? `Inscripciones: ${t.enlace}` : '',
+      '',
+      'Más torneos en https://www.padelpromos.es/agenda.html'
+    ].filter(Boolean).join('\n');
+
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      await navigator.share({ files: [file], title: t.torneo || 'Torneo de pádel', text: shareText });
+      return 'compartido';
+    }
+
+    // Alternativa: descargar la imagen y abrir WhatsApp con el texto listo
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = fileName;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 5000);
+    window.open(`https://wa.me/?text=${encodeURIComponent(shareText)}`, '_blank', 'noopener');
+    return 'descargado';
+  }
+
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-share-idx]');
+    if (!btn) return;
+    const idx = Number(btn.dataset.shareIdx);
+    const t = AGENDA_ITEMS[idx];
+    if (!t) return;
+    const original = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = 'Generando…';
+    compartirTorneo(t)
+      .catch(err => {
+        if (err && err.name !== 'AbortError') {
+          console.error(err);
+          alert('No se ha podido generar la imagen para compartir. Inténtalo de nuevo.');
+        }
+      })
+      .finally(() => { btn.disabled = false; btn.innerHTML = original; });
+  });
 
   function esc(s) {
     return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
