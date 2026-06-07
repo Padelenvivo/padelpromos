@@ -244,6 +244,10 @@
     </div>
     <div id="resultCards" class="result-cards" style="display:none"></div>
     <div id="resultActions" class="result-actions" style="display:none">
+      <button class="btn-sec" id="qrBtn" style="display:none" onclick="openImgModal('qr','')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><line x1="14" y1="14" x2="21" y2="14"/><line x1="14" y1="21" x2="21" y2="21"/><line x1="17" y1="14" x2="17" y2="21"/></svg>
+        QR inscripción
+      </button>
       <button class="btn-sec" id="copyAll">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
         Copiar todo
@@ -278,6 +282,7 @@
 
 <div class="copied-toast" id="toast">Copiado al portapapeles</div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
 <script>
   const LABELS = {
     instagram: 'Post Instagram', whatsapp: 'Mensaje WhatsApp', story: 'Story de apertura',
@@ -463,12 +468,102 @@
     return cv;
   }
 
+  // ── QR CODE ──────────────────────────────────────────────────
+  function drawQRMatrix(ctx, text, x, y, size, dark, light) {
+    const qr = qrcode(0, 'M');
+    qr.addData(text);
+    qr.make();
+    const count = qr.getModuleCount();
+    const cell = size / count;
+    if (light) { ctx.fillStyle = light; ctx.fillRect(x, y, size, size); }
+    ctx.fillStyle = dark || '#0f1a14';
+    for (let r = 0; r < count; r++) {
+      for (let c = 0; c < count; c++) {
+        if (qr.isDark(r, c)) ctx.fillRect(x + c * cell, y + r * cell, Math.ceil(cell), Math.ceil(cell));
+      }
+    }
+  }
+
+  function buildQRCanvas(formData) {
+    const W = 1080, H = 1080, PAD = 90;
+    const cv = document.createElement('canvas');
+    cv.width = W; cv.height = H;
+    const ctx = cv.getContext('2d');
+
+    const grad = ctx.createLinearGradient(0, 0, W * 0.6, H);
+    grad.addColorStop(0, '#091f12');
+    grad.addColorStop(0.55, '#0F6E56');
+    grad.addColorStop(1, '#1D9E75');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, W, H);
+
+    ctx.save();
+    ctx.globalAlpha = 0.07;
+    ctx.fillStyle = '#ffffff';
+    ctx.beginPath(); ctx.arc(W * 0.92, H * 0.1, 360, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(W * 0.06, H * 0.95, 260, 0, Math.PI * 2); ctx.fill();
+    ctx.restore();
+
+    // Branding
+    ctx.font = `400 30px 'DM Sans', sans-serif`;
+    ctx.textAlign = 'left';
+    ctx.fillStyle = 'rgba(255,255,255,0.45)';
+    ctx.fillText('Padel', PAD, 72);
+    const pW = ctx.measureText('Padel').width;
+    ctx.fillStyle = '#9FE1CB';
+    ctx.fillText('Promos', PAD + pW, 72);
+
+    // Club + torneo
+    ctx.font = `500 36px 'DM Sans', sans-serif`;
+    ctx.fillStyle = 'rgba(255,255,255,0.8)';
+    let club = (formData.club || 'Club').toUpperCase();
+    while (ctx.measureText(club).width > W - PAD * 2 && club.length > 4) club = club.slice(0, -1);
+    ctx.fillText(club, PAD, 150);
+
+    ctx.font = `700 56px 'DM Sans', sans-serif`;
+    ctx.fillStyle = '#ffffff';
+    const torneoLines = wrapLines(ctx, formData.torneo || 'Torneo', W - PAD * 2);
+    let ty = 220;
+    for (const ln of torneoLines.slice(0, 2)) { ctx.fillText(ln, PAD, ty); ty += 66; }
+
+    // CTA
+    ctx.font = `500 34px 'DM Sans', sans-serif`;
+    ctx.fillStyle = '#9FE1CB';
+    ctx.fillText('📲 Escanea para inscribirte', PAD, ty + 50);
+
+    // QR card
+    const qrSize = 480, qrBoxPad = 36;
+    const qrBoxSize = qrSize + qrBoxPad * 2;
+    const qrBoxX = (W - qrBoxSize) / 2;
+    const qrBoxY = ty + 100;
+    ctx.fillStyle = '#ffffff';
+    roundRect(ctx, qrBoxX, qrBoxY, qrBoxSize, qrBoxSize, 24);
+    ctx.fill();
+    drawQRMatrix(ctx, formData.enlace || 'https://padelpromos.es', qrBoxX + qrBoxPad, qrBoxY + qrBoxPad, qrSize, '#0f1a14', null);
+
+    // Info line
+    const infoY = qrBoxY + qrBoxSize + 64;
+    const infoparts = [formData.fecha, formData.categorias, formData.precio ? `${formData.precio}/pareja` : ''].filter(Boolean);
+    ctx.font = `400 28px 'DM Sans', sans-serif`;
+    ctx.fillStyle = 'rgba(255,255,255,0.65)';
+    ctx.textAlign = 'center';
+    ctx.fillText(infoparts.join('  ·  '), W / 2, infoY);
+
+    // Watermark
+    ctx.font = `400 24px 'DM Sans', sans-serif`;
+    ctx.fillStyle = 'rgba(255,255,255,0.32)';
+    ctx.fillText('padelpromos.es', W / 2, H - 50);
+
+    return cv;
+  }
+
   // ── MODAL ────────────────────────────────────────────────────
   function openImgModal(tipo, content) {
     modalTipo = tipo;
-    document.getElementById('imgModalTitle').textContent = LABELS[tipo] || tipo;
+    const isQR = tipo === 'qr';
+    document.getElementById('imgModalTitle').textContent = isQR ? 'QR de inscripción' : (LABELS[tipo] || tipo);
     const forStory = tipo === 'story';
-    const cv = buildCanvas(tipo, content, lastFormData, forStory);
+    const cv = isQR ? buildQRCanvas(lastFormData) : buildCanvas(tipo, content, lastFormData, forStory);
     modalCanvas = { tipo, content };
 
     // Show preview scaled down
@@ -481,8 +576,8 @@
     pCtx.drawImage(cv, 0, 0, preview.width, preview.height);
 
     // Show/hide story button
-    document.getElementById('btnDlStory').style.display = forStory ? 'none' : 'block';
-    document.getElementById('btnDlPost').textContent = forStory ? '⬇ Descargar Story (9:16)' : '⬇ Descargar Post (1:1)';
+    document.getElementById('btnDlStory').style.display = (forStory || isQR) ? 'none' : 'block';
+    document.getElementById('btnDlPost').textContent = isQR ? '⬇ Descargar QR de inscripción' : (forStory ? '⬇ Descargar Story (9:16)' : '⬇ Descargar Post (1:1)');
 
     document.getElementById('imgModal').classList.add('open');
   }
@@ -493,11 +588,12 @@
 
   function downloadFromModal(format) {
     if (!modalCanvas) return;
+    const isQR = modalCanvas.tipo === 'qr';
     const forStory = format === 'story';
-    const cv = buildCanvas(modalCanvas.tipo, modalCanvas.content, lastFormData, forStory);
+    const cv = isQR ? buildQRCanvas(lastFormData) : buildCanvas(modalCanvas.tipo, modalCanvas.content, lastFormData, forStory);
     const torneo = (lastFormData.torneo || 'torneo').toLowerCase().replace(/\s+/g, '-');
     const link = document.createElement('a');
-    link.download = `${torneo}-${modalCanvas.tipo}-${forStory ? 'story' : 'post'}.png`;
+    link.download = isQR ? `${torneo}-qr-inscripcion.png` : `${torneo}-${modalCanvas.tipo}-${forStory ? 'story' : 'post'}.png`;
     link.href = cv.toDataURL('image/png');
     link.click();
   }
@@ -600,6 +696,7 @@
       renderCards(parsed, contenidos);
       document.getElementById('resultCards').style.display = 'flex';
       document.getElementById('resultActions').style.display = 'flex';
+      document.getElementById('qrBtn').style.display = data.enlace ? 'flex' : 'none';
     } catch (err) {
       document.getElementById('resultEmpty').style.display = 'block';
       document.getElementById('resultEmpty').querySelector('.result-empty-title').textContent = 'Error al generar';
