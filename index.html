@@ -47,6 +47,8 @@
     .nav-links a:hover { color: var(--text); }
     .nav-cta { display: inline-flex; align-items: center; gap: 6px; padding: 9px 20px; background: var(--g); color: #fff; border-radius: var(--radius); font-size: 13px; font-weight: 500; text-decoration: none; transition: background .2s, transform .15s; }
     .nav-cta:hover { background: var(--gd); transform: translateY(-1px); }
+    .nav-toggle { display: none; background: none; border: none; font-size: 22px; color: var(--text); cursor: pointer; padding: 4px 10px; line-height: 1; border-radius: var(--radius); }
+    .nav-toggle:hover { background: var(--bg2); }
 
     /* BTN */
     .btn { display: inline-flex; align-items: center; gap: 8px; padding: 13px 28px; background: var(--g); color: #fff; border: none; border-radius: var(--radius); font-size: 15px; font-weight: 500; text-decoration: none; cursor: pointer; transition: background .2s, transform .15s; font-family: 'DM Sans', sans-serif; }
@@ -183,7 +185,11 @@
     /* RESPONSIVE */
     @media (max-width: 768px) {
       nav { padding: 0 20px; }
-      .nav-links { display: none; }
+  .nav-toggle { display: inline-flex; }
+        .nav-links { position: absolute; top: 60px; left: 0; right: 0; flex-direction: column; gap: 0; background: #fff; border-bottom: 0.5px solid var(--border2); box-shadow: 0 12px 24px rgba(0,0,0,.08); max-height: 0; overflow: hidden; opacity: 0; transition: max-height .25s ease, opacity .2s ease; }
+        .nav-links.open { max-height: 400px; opacity: 1; }
+        .nav-links li { width: 100%; }
+        .nav-links a { display: block; padding: 16px 20px; border-bottom: 0.5px solid var(--border2); }
       h1 { font-size: 34px; }
       section { padding: 56px 20px; }
       .hero { padding: 64px 20px 52px; }
@@ -209,6 +215,7 @@
     <li><a href="resultados.html">Resultados</a></li>
     <li><a href="precios.html">Precios</a></li>
   </ul>
+  <button class="nav-toggle" aria-label="Abrir menú" aria-expanded="false">☰</button>
   <a href="generador.html" class="nav-cta">Empezar gratis →</a>
 </nav>
 
@@ -455,5 +462,19 @@
   document.querySelectorAll('.fi').forEach(el => obs.observe(el));
 </script>
   <script defer src="/_vercel/insights/script.js"></script>
+  <script>
+      const navToggle = document.querySelector('.nav-toggle');
+      const navLinks = document.querySelector('.nav-links');
+      if (navToggle && navLinks) {
+            navToggle.addEventListener('click', () => {
+                    const open = navLinks.classList.toggle('open');
+                    navToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+            });
+            navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+                    navLinks.classList.remove('open');
+                    navToggle.setAttribute('aria-expanded', 'false');
+            }));
+      }
+        </script>
 </body>
 </html>
