@@ -49,6 +49,30 @@
     .form-section:last-of-type { border-bottom: none; }
     .form-section-title { font-size: 12px; font-weight: 500; letter-spacing: .08em; text-transform: uppercase; color: var(--g); margin-bottom: 16px; }
 
+    /* SUBIDA DE CARTEL */
+    .poster-upload { margin-bottom: 28px; }
+    .poster-dropzone { border: 1.5px dashed var(--border2); border-radius: var(--radius-lg); padding: 28px 20px; text-align: center; cursor: pointer; transition: all .2s; background: var(--bg2); }
+    .poster-dropzone:hover, .poster-dropzone.dragover { border-color: var(--g); background: var(--gl); }
+    .poster-dropzone-icon { width: 44px; height: 44px; background: var(--bg3); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px; }
+    .poster-dropzone-icon svg { width: 22px; height: 22px; color: var(--g); }
+    .poster-dropzone-title { font-size: 14px; font-weight: 500; color: var(--text); margin-bottom: 4px; }
+    .poster-dropzone-body { font-size: 12px; color: var(--text3); }
+    .poster-preview { display: flex; gap: 16px; align-items: center; border: 0.5px solid var(--border2); border-radius: var(--radius-lg); padding: 16px; background: var(--bg2); }
+    .poster-preview img { width: 84px; height: 84px; object-fit: cover; border-radius: var(--radius); flex-shrink: 0; box-shadow: 0 2px 8px rgba(0,0,0,.1); }
+    .poster-preview-info { flex: 1; min-width: 0; }
+    .poster-preview-name { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 8px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .poster-preview-actions { display: flex; gap: 8px; }
+    .btn-poster { padding: 9px 16px; background: var(--g); color: #fff; border: none; border-radius: var(--radius); font-size: 12px; font-weight: 500; cursor: pointer; font-family: 'DM Sans', sans-serif; display: inline-flex; align-items: center; gap: 6px; transition: background .2s; }
+    .btn-poster:hover { background: var(--gd); }
+    .btn-poster:disabled { opacity: .6; cursor: not-allowed; }
+    .btn-poster svg { width: 14px; height: 14px; }
+    .btn-poster svg.spin { animation: spin 1s linear infinite; }
+    .btn-poster-sec { padding: 9px 14px; background: transparent; color: var(--text2); border: 0.5px solid var(--border2); border-radius: var(--radius); font-size: 12px; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all .2s; }
+    .btn-poster-sec:hover { background: var(--bg3); }
+    .poster-hint { font-size: 11px; color: var(--text3); margin-top: 8px; display: flex; align-items: center; gap: 5px; }
+    .poster-divider { display: flex; align-items: center; gap: 12px; margin: 20px 0 28px; color: var(--text3); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; }
+    .poster-divider::before, .poster-divider::after { content: ''; flex: 1; height: 0.5px; background: var(--border2); }
+
     .tono-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
     .tono-opt { display: none; }
     .tono-label { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 12px 8px; border: 0.5px solid var(--border2); border-radius: var(--radius); cursor: pointer; font-size: 12px; color: var(--text2); text-align: center; transition: all .2s; }
@@ -144,6 +168,36 @@
   <div class="gen-form-col">
     <h1 class="gen-title">Datos del torneo</h1>
     <p class="gen-sub">Rellena el formulario y genera el pack completo de comunicación.</p>
+
+    <div class="poster-upload">
+      <input type="file" id="posterFile" accept="image/*" hidden>
+      <div class="poster-dropzone" id="posterDropzone">
+        <div class="poster-dropzone-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        </div>
+        <div class="poster-dropzone-title">Sube el cartel de tu torneo</div>
+        <div class="poster-dropzone-body">La IA leerá los datos automáticamente y rellenará el formulario por ti</div>
+      </div>
+      <div class="poster-preview" id="posterPreview" style="display:none">
+        <img id="posterImg" alt="Cartel del torneo">
+        <div class="poster-preview-info">
+          <div class="poster-preview-name" id="posterName">cartel.jpg</div>
+          <div class="poster-preview-actions">
+            <button type="button" class="btn-poster" id="posterAnalyzeBtn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+              <span class="btn-poster-text">Rellenar con IA</span>
+            </button>
+            <button type="button" class="btn-poster-sec" id="posterRemoveBtn">Quitar</button>
+          </div>
+        </div>
+      </div>
+      <div class="poster-hint">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:13px;height:13px;flex-shrink:0"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+        Revisa siempre los datos extraídos antes de generar — la IA puede no leer bien algún campo.
+      </div>
+    </div>
+
+    <div class="poster-divider">o rellena a mano</div>
 
     <form id="genForm">
       <div class="form-section">
@@ -653,6 +707,115 @@
       container.appendChild(card);
     });
   }
+
+  // ── SUBIDA DE CARTEL Y AUTORRELLENO CON IA ──────────────────
+  let posterFileData = null; // { base64, mediaType, name }
+
+  function fileToBase64(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const result = reader.result;
+        const base64 = result.split(',')[1];
+        resolve(base64);
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+
+  async function handlePosterFile(file) {
+    if (!file || !file.type.startsWith('image/')) {
+      showToast('Sube una imagen (JPG, PNG, WEBP...)');
+      return;
+    }
+    const base64 = await fileToBase64(file);
+    posterFileData = { base64, mediaType: file.type || 'image/jpeg', name: file.name };
+
+    const img = document.getElementById('posterImg');
+    img.src = `data:${posterFileData.mediaType};base64,${base64}`;
+    document.getElementById('posterName').textContent = file.name;
+    document.getElementById('posterDropzone').style.display = 'none';
+    document.getElementById('posterPreview').style.display = 'flex';
+  }
+
+  document.getElementById('posterDropzone').addEventListener('click', () => {
+    document.getElementById('posterFile').click();
+  });
+  document.getElementById('posterFile').addEventListener('change', (e) => {
+    const file = e.target.files && e.target.files[0];
+    if (file) handlePosterFile(file);
+  });
+  ['dragover', 'dragenter'].forEach(evt => {
+    document.getElementById('posterDropzone').addEventListener(evt, (e) => {
+      e.preventDefault();
+      document.getElementById('posterDropzone').classList.add('dragover');
+    });
+  });
+  ['dragleave', 'drop'].forEach(evt => {
+    document.getElementById('posterDropzone').addEventListener(evt, (e) => {
+      e.preventDefault();
+      document.getElementById('posterDropzone').classList.remove('dragover');
+    });
+  });
+  document.getElementById('posterDropzone').addEventListener('drop', (e) => {
+    const file = e.dataTransfer.files && e.dataTransfer.files[0];
+    if (file) handlePosterFile(file);
+  });
+
+  document.getElementById('posterRemoveBtn').addEventListener('click', () => {
+    posterFileData = null;
+    document.getElementById('posterFile').value = '';
+    document.getElementById('posterPreview').style.display = 'none';
+    document.getElementById('posterDropzone').style.display = 'block';
+  });
+
+  function setFieldValue(id, value) {
+    if (value === undefined || value === null || value === '') return;
+    const el = document.getElementById(id);
+    if (el) el.value = value;
+  }
+
+  function fillFormFromExtracted(d) {
+    setFieldValue('club', d.club);
+    setFieldValue('torneo', d.torneo);
+    setFieldValue('fecha_inicio', d.fecha_inicio);
+    setFieldValue('fecha_fin', d.fecha_fin);
+    setFieldValue('categorias', d.categorias);
+    setFieldValue('precio', d.precio);
+    setFieldValue('premios', d.premios);
+    setFieldValue('patrocinadores', d.patrocinadores);
+    setFieldValue('enlace', d.enlace);
+    setFieldValue('notas', d.notas);
+  }
+
+  document.getElementById('posterAnalyzeBtn').addEventListener('click', async () => {
+    if (!posterFileData) return;
+    const btn = document.getElementById('posterAnalyzeBtn');
+    const label = btn.querySelector('.btn-poster-text');
+    const svg = btn.querySelector('svg');
+    btn.disabled = true;
+    svg.classList.add('spin');
+    label.textContent = 'Leyendo cartel...';
+
+    try {
+      const response = await fetch('/api/extraer-cartel', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ image: posterFileData.base64, mediaType: posterFileData.mediaType })
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || 'No se pudo analizar el cartel');
+      fillFormFromExtracted(result.data || {});
+      showToast('Datos extraídos · revisa y ajusta antes de generar ✨');
+    } catch (err) {
+      showToast('No se pudo leer el cartel. Rellena el formulario a mano.');
+    } finally {
+      btn.disabled = false;
+      svg.classList.remove('spin');
+      label.textContent = 'Rellenar con IA';
+    }
+  });
 
   document.getElementById('genForm').addEventListener('submit', async (e) => {
     e.preventDefault();
