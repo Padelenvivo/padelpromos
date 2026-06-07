@@ -146,6 +146,13 @@
     .btn-dl-sec { flex: 0 0 auto; padding: 11px 16px; background: transparent; color: var(--text2); border: 0.5px solid var(--border2); border-radius: var(--radius); font-size: 13px; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all .2s; }
     .btn-dl-sec:hover { background: var(--bg3); }
 
+    /* BANNER PATROCINADOR */
+    .sponsor-banner { display: none; align-items: center; gap: 12px; margin-top: 28px; padding: 14px 16px; background: var(--bg); border: 0.5px solid var(--border2); border-radius: var(--radius-lg); }
+    .sponsor-banner.show { display: flex; }
+    .sponsor-banner-label { font-size: 10px; font-weight: 500; letter-spacing: .07em; text-transform: uppercase; color: var(--text3); white-space: nowrap; }
+    .sponsor-banner a { display: flex; align-items: center; flex: 1; min-width: 0; }
+    .sponsor-banner img { max-height: 40px; max-width: 100%; object-fit: contain; display: block; }
+
     @media (max-width: 900px) {
       .gen-layout { grid-template-columns: 1fr; }
       .gen-form-col { border-right: none; border-bottom: 0.5px solid var(--border2); }
@@ -297,6 +304,12 @@
       <div class="result-empty-body">Rellena el formulario de la izquierda<br>y pulsa «Generar pack completo».</div>
     </div>
     <div id="resultCards" class="result-cards" style="display:none"></div>
+    <div class="sponsor-banner" id="sponsorBanner">
+      <span class="sponsor-banner-label">Patrocina</span>
+      <a id="sponsorLink" href="#" target="_blank" rel="noopener sponsored">
+        <img id="sponsorImg" src="" alt="Patrocinador">
+      </a>
+    </div>
     <div id="resultActions" class="result-actions" style="display:none">
       <button class="btn-sec" id="qrBtn" style="display:none" onclick="openImgModal('qr','')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><line x1="14" y1="14" x2="21" y2="14"/><line x1="14" y1="21" x2="21" y2="21"/><line x1="17" y1="14" x2="17" y2="21"/></svg>
@@ -707,6 +720,24 @@
       container.appendChild(card);
     });
   }
+
+  // ── BANNER DE PATROCINADOR ──────────────────────────────────
+  (async function loadSponsorBanner() {
+    try {
+      const res = await fetch('/sponsors.json');
+      if (!res.ok) return;
+      const data = await res.json();
+      const activos = (data.patrocinadores || []).filter(p => p && p.activo && p.imagen && p.enlace);
+      if (!activos.length) return;
+      const elegido = activos[Math.floor(Math.random() * activos.length)];
+      const link = document.getElementById('sponsorLink');
+      const img = document.getElementById('sponsorImg');
+      link.href = elegido.enlace;
+      img.src = elegido.imagen;
+      img.alt = elegido.nombre || 'Patrocinador';
+      document.getElementById('sponsorBanner').classList.add('show');
+    } catch (e) { /* si falla, simplemente no se muestra el banner */ }
+  })();
 
   // ── SUBIDA DE CARTEL Y AUTORRELLENO CON IA ──────────────────
   let posterFileData = null; // { base64, mediaType, name }
