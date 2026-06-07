@@ -1,8 +1,10 @@
 // Da de alta un email en la lista de difusión de la newsletter semanal de PadelPromos.
+// Usa Brevo (antes Sendinblue) — https://www.brevo.com — plan gratuito válido para esto.
 //
 // Requiere dos variables de entorno configuradas en Vercel (Project Settings → Environment Variables):
-//   RESEND_API_KEY      → la clave API de tu cuenta de Resend (https://resend.com)
-//   RESEND_AUDIENCE_ID  → el ID de la "Audience" (lista de contactos) creada en Resend
+//   BREVO_API_KEY  → tu clave API de Brevo (Settings → SMTP & API → API Keys)
+//   BREVO_LIST_ID  → el ID numérico de la lista de contactos donde se apuntan los suscriptores
+//                    (Contacts → Lists → abre tu lista → el ID aparece en la URL o en "Settings")
 //
 // Sin esas variables configuradas, este endpoint responde con un error claro mostrando qué falta,
 // pero no rompe el resto del sitio.
@@ -22,32 +24,38 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Introduce un email válido' });
   }
 
-  const apiKey = process.env.RESEND_API_KEY;
-  const audienceId = process.env.RESEND_AUDIENCE_ID;
+  const apiKey = process.env.BREVO_API_KEY;
+  const listId = process.env.BREVO_LIST_ID;
 
-  if (!apiKey || !audienceId) {
+  if (!apiKey || !listId) {
     return res.status(500).json({
-      error: 'La newsletter todavía no está activada en el servidor (faltan RESEND_API_KEY / RESEND_AUDIENCE_ID).'
+      error: 'La newsletter todavía no está activada en el servidor (faltan BREVO_API_KEY / BREVO_LIST_ID).'
     });
   }
 
   try {
-    const resp = await fetch(`https://api.resend.com/audiences/${audienceId}/contacts`, {
+    const resp = await fetch('https://api.brevo.com/v3/contacts', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${apiKey}`
+        'api-key': apiKey
       },
       body: JSON.stringify({
         email: email.trim().toLowerCase(),
-        unsubscribed: false
+        listIds: [Number(listId)],
+        updateEnabled: true
       })
     });
 
-    // Resend devuelve 409 si el contacto ya existe — lo tratamos como éxito (ya está suscrito).
-    if (!resp.ok && resp.status !== 409) {
+    // Brevo devuelve 400 con código "duplicate_parameter" si el contacto ya existe
+    // y "updateEnabled" no basta para añadirlo a la lista en algunos casos — lo tratamos como éxito.
+    if (!resp.ok) {
       const detail = await resp.text();
-      return res.status(resp.status).json({ error: 'No se pudo completar la suscripción', detail });
+      let codigo;
+      try { codigo = JSON.parse(detail).code; } catch {}
+      if (resp.status !== 400 || codigo !== 'duplicate_parameter') {
+        return res.status(resp.status).json({ error: 'No se pudo completar la suscripción', detail });
+      }
     }
 
     return res.status(200).json({ ok: true });

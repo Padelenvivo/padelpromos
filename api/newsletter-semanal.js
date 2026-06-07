@@ -1,14 +1,17 @@
 // Genera y envía la newsletter semanal con los próximos torneos publicados en la agenda.
+// Usa Brevo (antes Sendinblue) — https://www.brevo.com — vía su API de campañas de email.
 // Pensado para ser invocado automáticamente por un Cron Job de Vercel (ver vercel.json),
 // pero también puede llamarse a mano para probarlo.
 //
 // Variables de entorno necesarias en Vercel:
-//   RESEND_API_KEY      → clave API de Resend
-//   RESEND_AUDIENCE_ID  → ID de la Audience (lista de suscriptores) a la que enviar
-//   CRON_SECRET         → cadena secreta cualquiera que tú elijas, para que solo Vercel Cron
-//                         (o tú mismo a mano con esa clave) puedan disparar el envío.
-//                         Vercel añade automáticamente la cabecera "Authorization: Bearer <CRON_SECRET>"
-//                         a las llamadas de Cron Jobs cuando defines esta variable.
+//   BREVO_API_KEY     → clave API de Brevo
+//   BREVO_LIST_ID     → ID numérico de la lista de contactos a la que enviar
+//   BREVO_SENDER      → email remitente verificado en Brevo (Senders & IP → Senders),
+//                       por ejemplo: newsletter@padelpromos.es
+//   CRON_SECRET       → cadena secreta cualquiera que tú elijas, para que solo Vercel Cron
+//                       (o tú mismo a mano con esa clave) puedan disparar el envío.
+//                       Vercel añade automáticamente la cabecera "Authorization: Bearer <CRON_SECRET>"
+//                       a las llamadas de Cron Jobs cuando defines esta variable.
 //
 // Si quieres probarlo manualmente: GET /api/newsletter-semanal?secret=TU_CRON_SECRET
 
@@ -55,7 +58,7 @@ function construirHtml(torneos) {
       </div>
       <p style="text-align:center;font-size:12px;color:#8aa096;margin:22px 0 0;">
         Recibes este correo porque te suscribiste en padelpromos.es.<br>
-        <a href="{{{RESEND_UNSUBSCRIBE_URL}}}" style="color:#8aa096;">Darme de baja</a>
+        {unsubscribe}
       </p>
     </div>
   </body>
@@ -74,12 +77,13 @@ export default async function handler(req, res) {
     }
   }
 
-  const apiKey = process.env.RESEND_API_KEY;
-  const audienceId = process.env.RESEND_AUDIENCE_ID;
+  const apiKey = process.env.BREVO_API_KEY;
+  const listId = process.env.BREVO_LIST_ID;
+  const sender = process.env.BREVO_SENDER;
 
-  if (!apiKey || !audienceId) {
+  if (!apiKey || !listId || !sender) {
     return res.status(500).json({
-      error: 'La newsletter todavía no está activada (faltan RESEND_API_KEY / RESEND_AUDIENCE_ID).'
+      error: 'La newsletter todavía no está activada (faltan BREVO_API_KEY / BREVO_LIST_ID / BREVO_SENDER).'
     });
   }
 
@@ -105,43 +109,43 @@ export default async function handler(req, res) {
     }
 
     const html = construirHtml(proximos);
+    const asunto = `🎾 ${proximos.length} torneo${proximos.length === 1 ? '' : 's'} de pádel esta semana`;
 
-    // 2) Crear un "broadcast" dirigido a la Audience y enviarlo
-    const crearResp = await fetch('https://api.resend.com/broadcasts', {
+    // 2) Crear la campaña de email dirigida a la lista de Brevo
+    const crearResp = await fetch('https://api.brevo.com/v3/emailCampaigns', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${apiKey}`
+        'api-key': apiKey
       },
       body: JSON.stringify({
-        audience_id: audienceId,
-        from: 'PadelPromos <newsletter@padelpromos.es>',
-        subject: `🎾 ${proximos.length} torneo${proximos.length === 1 ? '' : 's'} de pádel esta semana`,
-        html
+        name: `Newsletter semanal — ${new Date().toISOString().slice(0, 10)}`,
+        subject: asunto,
+        sender: { name: 'PadelPromos', email: sender },
+        htmlContent: html,
+        recipients: { listIds: [Number(listId)] }
       })
     });
 
     if (!crearResp.ok) {
       const detail = await crearResp.text();
-      return res.status(crearResp.status).json({ error: 'No se pudo crear el envío', detail });
+      return res.status(crearResp.status).json({ error: 'No se pudo crear la campaña', detail });
     }
 
-    const broadcast = await crearResp.json();
+    const campania = await crearResp.json();
 
-    const enviarResp = await fetch(`https://api.resend.com/broadcasts/${broadcast.id}/send`, {
+    // 3) Enviarla ahora mismo
+    const enviarResp = await fetch(`https://api.brevo.com/v3/emailCampaigns/${campania.id}/sendNow`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${apiKey}`
-      }
+      headers: { 'api-key': apiKey }
     });
 
     if (!enviarResp.ok) {
       const detail = await enviarResp.text();
-      return res.status(enviarResp.status).json({ error: 'No se pudo enviar el broadcast', detail });
+      return res.status(enviarResp.status).json({ error: 'No se pudo enviar la campaña', detail });
     }
 
-    return res.status(200).json({ ok: true, enviado: true, torneos: proximos.length });
+    return res.status(200).json({ ok: true, enviado: true, torneos: proximos.length, campaignId: campania.id });
   } catch (error) {
     return res.status(500).json({ error: 'Error interno', detail: error.message });
   }
