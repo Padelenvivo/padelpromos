@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agenda de Torneos — PadelPromos</title>
+  <meta name="description" content="Encuentra los próximos torneos de pádel: fechas, categorías, precios y enlaces de inscripción, todo en un único calendario.">
+  <meta property="og:title" content="Agenda de Torneos — PadelPromos">
+  <meta property="og:description" content="Todos los próximos torneos de pádel en un solo lugar.">
+  <meta property="og:url" content="https://padelpromos.es/agenda.html">
+  <link rel="canonical" href="https://padelpromos.es/agenda.html">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500&family=DM+Serif+Display&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --g: #1D9E75;
+      --gd: #0F6E56;
+      --gl: #E1F5EE;
+      --gm: #9FE1CB;
+      --text: #0f1a14;
+      --text2: #4a5e54;
+      --text3: #8aa096;
+      --bg: #ffffff;
+      --bg2: #f5faf7;
+      --bg3: #edf6f1;
+      --border: rgba(29,158,117,.15);
+      --border2: rgba(29,158,117,.3);
+      --radius: 10px;
+      --radius-lg: 14px;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'DM Sans', sans-serif; color: var(--text); background: var(--bg); line-height: 1.6; -webkit-font-smoothing: antialiased; }
+
+    /* NAV */
+    nav { position: sticky; top: 0; z-index: 100; background: rgba(255,255,255,.92); backdrop-filter: blur(12px); border-bottom: 0.5px solid var(--border2); padding: 0 40px; display: flex; align-items: center; justify-content: space-between; height: 60px; }
+    .nav-logo { font-size: 17px; font-weight: 500; color: var(--text); text-decoration: none; }
+    .nav-logo b { color: var(--g); font-weight: 500; }
+    .nav-links { display: flex; gap: 28px; list-style: none; }
+    .nav-links a { font-size: 14px; color: var(--text2); text-decoration: none; transition: color .2s; }
+    .nav-links a:hover, .nav-links a.active { color: var(--text); }
+    .nav-cta { display: inline-flex; align-items: center; gap: 6px; padding: 9px 20px; background: var(--g); color: #fff; border-radius: var(--radius); font-size: 13px; font-weight: 500; text-decoration: none; transition: background .2s, transform .15s; }
+    .nav-cta:hover { background: var(--gd); transform: translateY(-1px); }
+
+    /* BTN */
+    .btn { display: inline-flex; align-items: center; gap: 8px; padding: 13px 28px; background: var(--g); color: #fff; border: none; border-radius: var(--radius); font-size: 15px; font-weight: 500; text-decoration: none; cursor: pointer; transition: background .2s, transform .15s; font-family: 'DM Sans', sans-serif; }
+    .btn:hover { background: var(--gd); transform: translateY(-1px); }
+    .btn-ghost { background: transparent; color: var(--g); border: 1.5px solid var(--g); }
+    .btn-ghost:hover { background: var(--gl); }
+    .btn:disabled { opacity: .55; cursor: default; transform: none; }
+
+    /* HERO */
+    .hero { padding: 72px 40px 56px; text-align: center; border-bottom: 0.5px solid var(--border2); background: var(--bg); position: relative; overflow: hidden; }
+    .hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 70% 50% at 50% 0%, rgba(29,158,117,.07) 0%, transparent 70%); pointer-events: none; }
+    .hero-eyebrow { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; color: var(--gd); background: var(--gl); padding: 5px 14px; border-radius: 20px; margin-bottom: 20px; border: 0.5px solid var(--gm); position: relative; }
+    h1 { font-family: 'DM Serif Display', serif; font-size: 44px; line-height: 1.15; letter-spacing: -.5px; color: var(--text); margin-bottom: 16px; font-weight: 400; position: relative; }
+    h1 .hl { color: var(--g); font-style: italic; }
+    .hero-sub { font-size: 16px; color: var(--text2); line-height: 1.65; max-width: 520px; margin: 0 auto; position: relative; }
+
+    /* AGENDA SECTION */
+    .agenda-wrap { max-width: 920px; margin: 0 auto; padding: 56px 40px 80px; }
+    .agenda-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 28px; flex-wrap: wrap; }
+    .agenda-count { font-size: 13px; color: var(--text3); }
+    .agenda-search { display: flex; align-items: center; gap: 8px; background: var(--bg2); border: 0.5px solid var(--border2); border-radius: var(--radius); padding: 9px 14px; min-width: 220px; }
+    .agenda-search svg { width: 16px; height: 16px; color: var(--text3); flex-shrink: 0; }
+    .agenda-search input { border: none; background: none; outline: none; font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--text); width: 100%; }
+    .agenda-search input::placeholder { color: var(--text3); }
+
+    .tcard { background: var(--bg); border: 0.5px solid var(--border2); border-radius: var(--radius-lg); padding: 22px 24px; margin-bottom: 14px; display: flex; gap: 20px; align-items: center; transition: border-color .2s, transform .15s; }
+    .tcard:hover { border-color: var(--g); transform: translateY(-2px); }
+    .tdate { flex-shrink: 0; width: 64px; text-align: center; background: var(--bg3); border: 0.5px solid var(--border2); border-radius: var(--radius); padding: 10px 6px; }
+    .tdate-day { font-family: 'DM Serif Display', serif; font-size: 22px; color: var(--g); line-height: 1; }
+    .tdate-month { font-size: 10px; font-weight: 500; letter-spacing: .08em; text-transform: uppercase; color: var(--text3); margin-top: 4px; }
+    .tbody { flex: 1; min-width: 0; }
+    .ttitle { font-size: 16px; font-weight: 500; color: var(--text); margin-bottom: 3px; }
+    .tclub { font-size: 13px; color: var(--text2); margin-bottom: 8px; }
+    .tmeta { display: flex; flex-wrap: wrap; gap: 8px; }
+    .tpill { font-size: 11px; color: var(--text2); background: var(--bg2); border: 0.5px solid var(--border2); padding: 4px 10px; border-radius: 20px; display: inline-flex; align-items: center; gap: 4px; }
+    .tpill svg { width: 12px; height: 12px; color: var(--g); flex-shrink: 0; }
+    .tlink { flex-shrink: 0; }
+
+    .empty { text-align: center; padding: 64px 20px; color: var(--text2); }
+    .empty svg { width: 40px; height: 40px; color: var(--gm); margin-bottom: 14px; }
+    .empty p { font-size: 14px; max-width: 380px; margin: 0 auto; line-height: 1.65; }
+
+    /* PUBLISH SECTION */
+    .publish { background: var(--bg2); border-top: 0.5px solid var(--border2); padding: 72px 40px; }
+    .publish-inner { max-width: 640px; margin: 0 auto; text-align: center; }
+    .publish h2 { font-family: 'DM Serif Display', serif; font-size: 30px; font-weight: 400; color: var(--text); margin-bottom: 12px; letter-spacing: -.3px; }
+    .publish p { font-size: 14px; color: var(--text2); line-height: 1.7; margin-bottom: 28px; }
+    .pdrop { background: var(--bg); border: 1.5px dashed var(--border2); border-radius: var(--radius-lg); padding: 30px 20px; cursor: pointer; transition: border-color .2s, background .2s; }
+    .pdrop:hover, .pdrop.dragover { border-color: var(--g); background: var(--gl); }
+    .pdrop svg { width: 28px; height: 28px; color: var(--g); margin-bottom: 10px; }
+    .pdrop-title { font-size: 14px; font-weight: 500; color: var(--text); margin-bottom: 4px; }
+    .pdrop-sub { font-size: 12px; color: var(--text3); }
+    .ppreview { display: none; align-items: center; gap: 14px; background: var(--bg); border: 0.5px solid var(--border2); border-radius: var(--radius-lg); padding: 14px 16px; text-align: left; }
+    .ppreview img { width: 56px; height: 56px; object-fit: cover; border-radius: 8px; flex-shrink: 0; border: 0.5px solid var(--border2); }
+    .ppreview-name { font-size: 13px; color: var(--text); font-weight: 500; word-break: break-all; }
+    .ppreview-actions { display: flex; gap: 8px; margin-top: 8px; }
+    .pmini { font-size: 12px; color: var(--g); background: none; border: none; cursor: pointer; font-family: 'DM Sans', sans-serif; padding: 0; }
+    .pmini:hover { text-decoration: underline; }
+    .pactions { display: flex; justify-content: center; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
+    .spin { animation: spin 1s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .presult { display: none; text-align: left; background: var(--bg); border: 0.5px solid var(--border2); border-radius: var(--radius-lg); padding: 18px 20px; margin-top: 18px; font-size: 13px; color: var(--text2); line-height: 1.8; }
+    .presult b { color: var(--text); font-weight: 500; }
+    .pnote { font-size: 11px; color: var(--text3); margin-top: 14px; line-height: 1.6; }
+
+    /* FOOTER */
+    footer { padding: 28px 40px; border-top: 0.5px solid var(--border2); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px; }
+    .footer-logo { font-size: 15px; font-weight: 500; color: var(--text); text-decoration: none; }
+    .footer-logo b { color: var(--g); font-weight: 500; }
+    .footer-links { display: flex; gap: 24px; list-style: none; }
+    .footer-links a { font-size: 12px; color: var(--text3); text-decoration: none; transition: color .2s; }
+    .footer-links a:hover { color: var(--text); }
+    .footer-copy { font-size: 12px; color: var(--text3); }
+
+    @media (max-width: 760px) {
+      .nav-links { display: none; }
+      nav, .hero, .agenda-wrap, .publish { padding-left: 20px; padding-right: 20px; }
+      h1 { font-size: 34px; }
+      .tcard { flex-wrap: wrap; }
+      .tlink { width: 100%; }
+      .tlink .btn { width: 100%; justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="nav-logo">Padel<b>Promos</b></a>
+  <ul class="nav-links">
+    <li><a href="/#como-funciona">Cómo funciona</a></li>
+    <li><a href="agenda.html" class="active">Agenda de torneos</a></li>
+    <li><a href="precios.html">Precios</a></li>
+  </ul>
+  <a href="generador.html" class="nav-cta">Empezar gratis →</a>
+</nav>
+
+<section class="hero">
+  <span class="hero-eyebrow">📅 Agenda de torneos</span>
+  <h1>Los próximos torneos de <span class="hl">pádel</span>, en un solo sitio</h1>
+  <p class="hero-sub">Fechas, categorías, precios y enlaces de inscripción de los torneos que se acercan. Actualizada por la comunidad de PadelPromos.</p>
+</section>
+
+<div class="agenda-wrap">
+  <div class="agenda-toolbar">
+    <span class="agenda-count" id="agendaCount">Cargando torneos…</span>
+    <div class="agenda-search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" id="agendaSearch" placeholder="Busca por club, ciudad o torneo…">
+    </div>
+  </div>
+
+  <div id="agendaList"></div>
+
+  <div class="empty" id="agendaEmpty" style="display:none;">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+    <p>Todavía no hay torneos publicados que coincidan. Si organizas uno, ¡publícalo aquí abajo y aparecerá en la agenda!</p>
+  </div>
+</div>
+
+<section class="publish">
+  <div class="publish-inner">
+    <h2>¿Organizas un torneo? Publícalo gratis</h2>
+    <p>Sube el cartel de tu torneo, nuestra IA extrae los datos automáticamente y te preparamos un email listo para enviarnos — lo revisamos y lo añadimos a la agenda en poco tiempo.</p>
+
+    <div class="pdrop" id="pDropzone">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      <div class="pdrop-title">Sube o arrastra el cartel del torneo</div>
+      <div class="pdrop-sub">JPG, PNG o WEBP — la IA leerá los datos por ti</div>
+      <input type="file" id="pFile" accept="image/*" style="display:none;">
+    </div>
+
+    <div class="ppreview" id="pPreview">
+      <img id="pImg" src="" alt="Cartel">
+      <div>
+        <div class="ppreview-name" id="pName"></div>
+        <div class="ppreview-actions">
+          <button type="button" class="pmini" id="pRemoveBtn">Quitar</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="pactions">
+      <button type="button" class="btn" id="pAnalyzeBtn" style="display:none;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+        <span class="btn-text">Leer cartel y preparar publicación</span>
+      </button>
+    </div>
+
+    <div class="presult" id="pResult"></div>
+
+    <p class="pnote">Tus datos solo se usan para preparar el email de publicación — revisas todo antes de enviarlo, y nosotros revisamos todo antes de publicarlo. Nada se publica automáticamente.</p>
+  </div>
+</section>
+
+<footer>
+  <a href="/" class="footer-logo">Padel<b>Promos</b></a>
+  <ul class="footer-links">
+    <li><a href="/#como-funciona">Cómo funciona</a></li>
+    <li><a href="precios.html">Precios</a></li>
+    <li><a href="mailto:hola@padelpromos.es">Contacto</a></li>
+  </ul>
+  <span class="footer-copy">© 2026 PadelPromos.es</span>
+</footer>
+
+<script>
+  // ---------- Cargar y pintar la agenda ----------
+  const MESES = ['ENE','FEB','MAR','ABR','MAY','JUN','JUL','AGO','SEP','OCT','NOV','DIC'];
+  let TORNEOS = [];
+
+  function parseFecha(s) {
+    if (!s) return null;
+    const m = String(s).match(/^(\d{4})-(\d{2})-(\d{2})/);
+    if (!m) return null;
+    return new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
+  }
+
+  function renderAgenda(filtro) {
+    const list = document.getElementById('agendaList');
+    const empty = document.getElementById('agendaEmpty');
+    const count = document.getElementById('agendaCount');
+    const hoy = new Date();
+    hoy.setHours(0,0,0,0);
+
+    let items = TORNEOS.filter(t => t && t.publicado);
+    items = items.map(t => ({ ...t, _fecha: parseFecha(t.fecha_fin) || parseFecha(t.fecha_inicio) }));
+    items = items.filter(t => t._fecha && t._fecha >= hoy);
+    items.sort((a, b) => a._fecha - b._fecha);
+
+    if (filtro) {
+      const q = filtro.trim().toLowerCase();
+      items = items.filter(t =>
+        (t.club || '').toLowerCase().includes(q) ||
+        (t.torneo || '').toLowerCase().includes(q) ||
+        (t.ciudad || '').toLowerCase().includes(q) ||
+        (t.categorias || '').toLowerCase().includes(q)
+      );
+    }
+
+    list.innerHTML = '';
+    if (!items.length) {
+      empty.style.display = 'block';
+      count.textContent = 'No hay torneos para mostrar ahora mismo';
+      return;
+    }
+    empty.style.display = 'none';
+    count.textContent = `${items.length} torneo${items.length === 1 ? '' : 's'} próximo${items.length === 1 ? '' : 's'}`;
+
+    items.forEach(t => {
+      const f = t._fecha;
+      const card = document.createElement('div');
+      card.className = 'tcard';
+
+      const pills = [];
+      if (t.ciudad) pills.push(`<span class="tpill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 12-9 12s-9-5-9-12a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>${esc(t.ciudad)}</span>`);
+      if (t.categorias) pills.push(`<span class="tpill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="6"/><path d="M9.5 13 6 22l6-3 6 3-3.5-9"/></svg>${esc(t.categorias)}</span>`);
+      if (t.precio) pills.push(`<span class="tpill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M14.5 9.5a2.5 2.5 0 0 0-2.5-1.5h-1a2 2 0 0 0 0 4h2a2 2 0 0 1 0 4h-1a2.5 2.5 0 0 1-2.5-1.5M12 6.5v1M12 16.5v1"/></svg>${esc(t.precio)}</span>`);
+
+      let fechaTxt = '';
+      if (t.fecha_inicio && t.fecha_fin && t.fecha_inicio !== t.fecha_fin) {
+        const fi = parseFecha(t.fecha_inicio);
+        if (fi) fechaTxt = `${fi.getDate()} – ${f.getDate()} ${MESES[f.getMonth()]} ${f.getFullYear()}`;
+      }
+      if (!fechaTxt) fechaTxt = `${f.getDate()} ${MESES[f.getMonth()]} ${f.getFullYear()}`;
+
+      card.innerHTML = `
+        <div class="tdate">
+          <div class="tdate-day">${(parseFecha(t.fecha_inicio) || f).getDate()}</div>
+          <div class="tdate-month">${MESES[(parseFecha(t.fecha_inicio) || f).getMonth()]}</div>
+        </div>
+        <div class="tbody">
+          <div class="ttitle">${esc(t.torneo || 'Torneo de pádel')}</div>
+          <div class="tclub">${esc(t.club || '')}${t.club ? ' · ' : ''}${esc(fechaTxt)}</div>
+          <div class="tmeta">${pills.join('')}</div>
+        </div>
+        ${t.enlace ? `<div class="tlink"><a class="btn btn-ghost" href="${escAttr(t.enlace)}" target="_blank" rel="noopener">Inscribirse →</a></div>` : ''}
+      `;
+      list.appendChild(card);
+    });
+  }
+
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+  function escAttr(s) {
+    return esc(s).replace(/"/g, '&quot;');
+  }
+
+  fetch('/torneos.json')
+    .then(r => r.ok ? r.json() : { torneos: [] })
+    .then(data => {
+      TORNEOS = (data && data.torneos) || [];
+      renderAgenda('');
+    })
+    .catch(() => {
+      document.getElementById('agendaCount').textContent = 'No se pudo cargar la agenda';
+      document.getElementById('agendaEmpty').style.display = 'block';
+    });
+
+  document.getElementById('agendaSearch').addEventListener('input', (e) => renderAgenda(e.target.value));
+
+  // ---------- Publicar torneo (lectura de cartel + email) ----------
+  let posterData = null;
+
+  function fileToBase64(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result.split(',')[1]);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+
+  async function handleFile(file) {
+    if (!file || !file.type.startsWith('image/')) return;
+    const base64 = await fileToBase64(file);
+    posterData = { base64, mediaType: file.type || 'image/jpeg', name: file.name };
+    document.getElementById('pImg').src = `data:${posterData.mediaType};base64,${base64}`;
+    document.getElementById('pName').textContent = file.name;
+    document.getElementById('pDropzone').style.display = 'none';
+    document.getElementById('pPreview').style.display = 'flex';
+    document.getElementById('pAnalyzeBtn').style.display = 'inline-flex';
+    document.getElementById('pResult').style.display = 'none';
+  }
+
+  const dz = document.getElementById('pDropzone');
+  dz.addEventListener('click', () => document.getElementById('pFile').click());
+  document.getElementById('pFile').addEventListener('change', e => {
+    const f = e.target.files && e.target.files[0];
+    if (f) handleFile(f);
+  });
+  ['dragover','dragenter'].forEach(evt => dz.addEventListener(evt, e => { e.preventDefault(); dz.classList.add('dragover'); }));
+  ['dragleave','drop'].forEach(evt => dz.addEventListener(evt, e => { e.preventDefault(); dz.classList.remove('dragover'); }));
+  dz.addEventListener('drop', e => {
+    const f = e.dataTransfer.files && e.dataTransfer.files[0];
+    if (f) handleFile(f);
+  });
+  document.getElementById('pRemoveBtn').addEventListener('click', () => {
+    posterData = null;
+    document.getElementById('pFile').value = '';
+    document.getElementById('pPreview').style.display = 'none';
+    document.getElementById('pAnalyzeBtn').style.display = 'none';
+    document.getElementById('pResult').style.display = 'none';
+    document.getElementById('pDropzone').style.display = 'block';
+  });
+
+  document.getElementById('pAnalyzeBtn').addEventListener('click', async () => {
+    if (!posterData) return;
+    const btn = document.getElementById('pAnalyzeBtn');
+    const label = btn.querySelector('.btn-text');
+    const svg = btn.querySelector('svg');
+    btn.disabled = true;
+    svg.classList.add('spin');
+    label.textContent = 'Leyendo cartel...';
+
+    try {
+      const res = await fetch('/api/extraer-cartel', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ image: posterData.base64, mediaType: posterData.mediaType })
+      });
+      const result = await res.json();
+      if (!res.ok) throw new Error(result.error || 'No se pudo leer el cartel');
+      mostrarResultado(result.data || {});
+    } catch (err) {
+      const box = document.getElementById('pResult');
+      box.style.display = 'block';
+      box.innerHTML = `No hemos podido leer el cartel automáticamente. No te preocupes — puedes <a href="${mailtoManual()}" style="color:var(--g);">escribirnos directamente por email</a> con los datos de tu torneo y lo añadimos igualmente.`;
+    } finally {
+      btn.disabled = false;
+      svg.classList.remove('spin');
+      label.textContent = 'Leer cartel y preparar publicación';
+    }
+  });
+
+  function mailtoManual() {
+    const subject = encodeURIComponent('Quiero publicar un torneo en la Agenda de PadelPromos');
+    const body = encodeURIComponent('Hola,\n\nMe gustaría publicar el siguiente torneo en la Agenda de PadelPromos:\n\nClub: \nTorneo: \nFecha de inicio: \nFecha de fin: \nCiudad: \nCategorías: \nPrecio: \nEnlace de inscripción: \n\n¡Gracias!');
+    return `mailto:hola@padelpromos.es?subject=${subject}&body=${body}`;
+  }
+
+  function mostrarResultado(d) {
+    const box = document.getElementById('pResult');
+    const campos = [
+      ['Club', d.club], ['Torneo', d.torneo], ['Fecha inicio', d.fecha_inicio], ['Fecha fin', d.fecha_fin],
+      ['Categorías', d.categorias], ['Precio', d.precio], ['Enlace', d.enlace], ['Notas', d.notas]
+    ].filter(([,v]) => v);
+
+    const filas = campos.map(([k,v]) => `<div><b>${esc(k)}:</b> ${esc(v)}</div>`).join('');
+
+    const subject = encodeURIComponent(`Publicar torneo en la agenda: ${d.torneo || ''}`.trim());
+    const cuerpo = [
+      'Hola,', '',
+      'He leído el cartel de mi torneo con el lector automático de PadelPromos. Aquí están los datos detectados — he revisado que sean correctos antes de enviarlos:', '',
+      `Club: ${d.club || ''}`,
+      `Torneo: ${d.torneo || ''}`,
+      `Fecha de inicio: ${d.fecha_inicio || ''}`,
+      `Fecha de fin: ${d.fecha_fin || ''}`,
+      `Ciudad: `,
+      `Categorías: ${d.categorias || ''}`,
+      `Precio: ${d.precio || ''}`,
+      `Enlace de inscripción: ${d.enlace || ''}`,
+      `Notas: ${d.notas || ''}`, '',
+      '¡Gracias por añadirlo a la agenda!'
+    ].join('\n');
+    const body = encodeURIComponent(cuerpo);
+    const mailto = `mailto:hola@padelpromos.es?subject=${subject}&body=${body}`;
+
+    box.style.display = 'block';
+    box.innerHTML = `
+      <div style="margin-bottom:14px;">Esto es lo que hemos leído del cartel — <b>revísalo</b> y completa lo que falte (como la ciudad) antes de enviarlo:</div>
+      ${filas || '<div>No se ha podido leer ningún dato — escríbenos directamente.</div>'}
+      <div style="margin-top:16px;"><a class="btn" href="${mailto}" style="display:inline-flex;">Abrir email para enviarlo →</a></div>
+    `;
+  }
+</script>
+
+<script defer src="/_vercel/insights/script.js"></script>
+</body>
+</html>
