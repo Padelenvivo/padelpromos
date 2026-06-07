@@ -5,7 +5,7 @@
       "nombre": "Espacio disponible para patrocinadores",
       "imagen": "https://via.placeholder.com/240x80/1D9E75/ffffff?text=Patrocina+aqui",
       "enlace": "https://www.padelpromos.es",
-      "activo": true
+      "activo": false
     },
     {
       "nombre": "Fit Point",
