@@ -31,6 +31,8 @@
     .nav-links a:hover { color: var(--text); }
     .nav-cta { display: inline-flex; align-items: center; gap: 6px; padding: 9px 20px; background: var(--g); color: #fff; border-radius: var(--radius); font-size: 13px; font-weight: 500; text-decoration: none; transition: background .2s; }
     .nav-cta:hover { background: var(--gd); }
+    .nav-toggle { display: none; background: none; border: none; font-size: 22px; color: var(--text); cursor: pointer; padding: 4px 10px; line-height: 1; border-radius: var(--radius); }
+    .nav-toggle:hover { background: var(--bg2); }
 
     .page-header { padding: 72px 40px 48px; text-align: center; border-bottom: 0.5px solid var(--border2); background: var(--bg2); }
     .page-label { font-size: 11px; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; color: var(--g); margin-bottom: 12px; }
@@ -102,9 +104,13 @@
 
     @media (max-width: 900px) {
       nav { padding: 0 20px; }
-      .nav-links { display: none; }
-      .page-header { padding: 52px 20px 36px; }
-      h1 { font-size: 30px; }
+      .nav-toggle { display: inline-flex; }
+      .nav-links { position: absolute; top: 60px; left: 0; right: 0; flex-direction: column; gap: 0; background: #fff; border-bottom: 0.5px solid var(--border2); box-shadow: 0 12px 24px rgba(0,0,0,.08); max-height: 0; overflow: hidden; opacity: 0; transition: max-height .25s ease, opacity .2s ease; }
+      .nav-links.open { max-height: 400px; opacity: 1; }
+      .nav-links li { width: 100%; }
+      .nav-links a { display: block; padding: 16px 20px; border-bottom: 0.5px solid var(--border2); }
+                                    .page-header { padding: 52px 20px 36px; }
+            h1 { font-size: 30px; }
       .plans { padding: 40px 20px; }
       .plans-grid { grid-template-columns: repeat(2, 1fr); }
       .compare { padding: 0 20px 60px; overflow-x: auto; }
@@ -128,6 +134,7 @@
     <li><a href="resultados.html">Resultados</a></li>
     <li><a href="precios.html">Precios</a></li>
   </ul>
+    <button class="nav-toggle" aria-label="Abrir menú" aria-expanded="false">☰</button>
   <a href="generador.html" class="nav-cta">Empezar gratis →</a>
 </nav>
 
@@ -289,5 +296,19 @@
   });
 </script>
   <script defer src="/_vercel/insights/script.js"></script>
-</body>
+  <script>
+        const navToggle = document.querySelector('.nav-toggle');
+        const navLinks = document.querySelector('.nav-links');
+        if (navToggle && navLinks) {
+          navToggle.addEventListener('click', () => {
+            const open = navLinks.classList.toggle('open');
+            navToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+          });
+                    navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+                                  navLinks.classList.remove('open');
+                                  navToggle.setAttribute('aria-expanded', 'false');
+                    }));
+        }
+          </script>
+  </body>
 </html>
