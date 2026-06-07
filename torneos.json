@@ -21,6 +21,7 @@
       "categorias": "Masculina 1ª-5ª, Femenina 1ª-5ª, Mixtos B-C-D",
       "precio": "25 € una categoría / 45 € dos categorías",
       "enlace": "https://torneos.sportelia.es/#/tournaments-details/-OsFFvMg1r8lAXt4oV8-/public",
+      "imagen": "carteles/cartel-prinsotel-6.jpg",
       "publicado": true
     },
     {
@@ -32,6 +33,7 @@
       "categorias": "Masculina 2ª-4ª, Femenina 3ª-4ª, Mixtos C",
       "precio": "25 € (solo 1 categoría)",
       "enlace": "https://torneos.sportelia.es/#/tournaments-details/-OkZZK5DhY9nBAnnJaLb/public",
+      "imagen": "carteles/cartel-caprice-vell-mari.jpg",
       "publicado": true
     },
     {
@@ -43,6 +45,7 @@
       "categorias": "Masculina 1ª-5ª, Femenina 1ª-5ª, Mixtos B-C-D",
       "precio": "25 € una categoría / 45 € dos categorías",
       "enlace": "",
+      "imagen": "carteles/cartel-prinsotel-7.jpg",
       "publicado": true
     }
   ]
