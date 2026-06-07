@@ -1,6 +1,12 @@
 {
-  "_instrucciones": "Edita esta lista para gestionar los banners de patrocinadores. Cada entrada necesita: nombre, imagen (URL del logo, idealmente 240x80px o similar), enlace (a donde va el clic) y activo (true/false para mostrarlo u ocultarlo sin borrarlo). Se elige uno al azar entre los que tengan activo=true cada vez que se carga la página.",
+  "_instrucciones": "Edita esta lista para gestionar los banners de patrocinadores. Cada entrada necesita: nombre, imagen (URL del logo, idealmente 240x80px o similar), enlace (a donde va el clic) y activo (true/false para mostrarlo u ocultarlo sin borrarlo). Se elige uno al azar entre los que tengan activo=true cada vez que se carga la página. El de 'Espacio disponible' es solo un ejemplo de demostración: sustitúyelo (o desactívalo) cuando tengas patrocinadores reales.",
   "patrocinadores": [
+    {
+      "nombre": "Espacio disponible para patrocinadores",
+      "imagen": "https://via.placeholder.com/240x80/1D9E75/ffffff?text=Patrocina+aqui",
+      "enlace": "https://www.padelpromos.es",
+      "activo": true
+    },
     {
       "nombre": "Fit Point",
       "imagen": "https://via.placeholder.com/240x80/1D9E75/ffffff?text=Fit+Point",
