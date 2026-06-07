@@ -67,8 +67,18 @@
     .agenda-search input { border: none; background: none; outline: none; font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--text); width: 100%; }
     .agenda-search input::placeholder { color: var(--text3); }
 
-    .tcard { background: var(--bg); border: 0.5px solid var(--border2); border-radius: var(--radius-lg); padding: 22px 24px; margin-bottom: 14px; display: flex; gap: 20px; align-items: center; transition: border-color .2s, transform .15s; }
+    .tcard { background: var(--bg); border: 0.5px solid var(--border2); border-radius: var(--radius-lg); padding: 22px 24px; margin-bottom: 14px; display: flex; gap: 20px; align-items: center; transition: border-color .2s, transform .15s; position: relative; }
     .tcard:hover { border-color: var(--g); transform: translateY(-2px); }
+    .tcard.destacado { border-color: #EAC872; background: linear-gradient(135deg, #FFFBF0 0%, #ffffff 65%); box-shadow: 0 6px 24px rgba(199,151,39,.14); }
+    .tcard.destacado:hover { border-color: #D6A84A; }
+    .tbadge-featured { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 600; letter-spacing: .02em; color: #92660A; background: #FFF1D6; border: 0.5px solid #EFCF8F; padding: 4px 10px; border-radius: 20px; margin-bottom: 8px; margin-right: 6px; }
+    .tbadge-featured svg { width: 11px; height: 11px; fill: #D6A331; flex-shrink: 0; }
+
+    .featured-cta { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; background: linear-gradient(135deg, #FFFBF0 0%, var(--bg2) 100%); border: 0.5px solid #EFCF8F; border-radius: var(--radius-lg); padding: 16px 22px; margin-bottom: 24px; }
+    .featured-cta p { font-size: 13px; color: var(--text2); line-height: 1.55; max-width: 540px; }
+    .featured-cta strong { color: #92660A; }
+    .featured-cta a { flex-shrink: 0; display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 500; color: #92660A; text-decoration: none; border: 1.5px solid #EFCF8F; background: #fff; padding: 9px 18px; border-radius: var(--radius); transition: background .2s, border-color .2s; }
+    .featured-cta a:hover { background: #FFF1D6; border-color: #D6A84A; }
     .tposter { flex-shrink: 0; width: 56px; height: 78px; border-radius: var(--radius); overflow: hidden; border: 0.5px solid var(--border2); background: var(--bg3); }
     .tposter img { width: 100%; height: 100%; object-fit: cover; display: block; }
     .tdate { flex-shrink: 0; width: 64px; text-align: center; background: var(--bg3); border: 0.5px solid var(--border2); border-radius: var(--radius); padding: 10px 6px; }
@@ -170,6 +180,11 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
       <input type="text" id="agendaSearch" placeholder="Busca por club, ciudad o torneo…">
     </div>
+  </div>
+
+  <div class="featured-cta">
+    <p>★ <strong>Destaca tu torneo</strong> — aparece arriba de la agenda con una insignia dorada y más visibilidad ante cientos de jugadores que buscan dónde competir. Encaja con nuestros planes de patrocinio.</p>
+    <a href="mailto:hola@padelpromos.es?subject=Quiero%20destacar%20mi%20torneo%20en%20la%20agenda&body=Hola%2C%0A%0AMe%20gustar%C3%ADa%20que%20mi%20torneo%20apareciera%20destacado%20en%20la%20Agenda%20de%20PadelPromos.%20%C2%BFQu%C3%A9%20opciones%20ten%C3%A9is%3F%0A%0AClub%2Forganizador%3A%20%0ATorneo%3A%20%0A%0A%C2%A1Gracias!">Más información →</a>
   </div>
 
   <div id="agendaList"></div>
@@ -274,7 +289,7 @@
     let items = TORNEOS.filter(t => t && t.publicado);
     items = items.map(t => ({ ...t, _fecha: parseFecha(t.fecha_fin) || parseFecha(t.fecha_inicio) }));
     items = items.filter(t => t._fecha && t._fecha >= hoy);
-    items.sort((a, b) => a._fecha - b._fecha);
+    items.sort((a, b) => (b.destacado ? 1 : 0) - (a.destacado ? 1 : 0) || a._fecha - b._fecha);
 
     if (filtro) {
       const q = filtro.trim().toLowerCase();
@@ -299,7 +314,7 @@
     items.forEach((t, idx) => {
       const f = t._fecha;
       const card = document.createElement('div');
-      card.className = 'tcard';
+      card.className = t.destacado ? 'tcard destacado' : 'tcard';
       card.dataset.idx = String(idx);
 
       const pills = [];
@@ -321,6 +336,7 @@
           <div class="tdate-month">${MESES[(parseFecha(t.fecha_inicio) || f).getMonth()]}</div>
         </div>
         <div class="tbody">
+          ${t.destacado ? `<span class="tbadge-featured"><svg viewBox="0 0 24 24"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7-6.2-3.7-6.2 3.7 1.6-7L2 9.2l7.1-.6z"/></svg>Destacado</span>` : ''}
           ${cuentaAtras(t, hoy)}
           <div class="ttitle">${esc(t.torneo || 'Torneo de pádel')}</div>
           <div class="tclub">${esc(t.club || '')}${t.club ? ' · ' : ''}${esc(fechaTxt)}</div>

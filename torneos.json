@@ -1,5 +1,5 @@
 {
-  "_instrucciones": "Edita esta lista para gestionar la Agenda de Torneos. Cada entrada necesita: club, torneo, fecha_inicio (AAAA-MM-DD), fecha_fin (opcional, AAAA-MM-DD), ciudad, categorias, precio, enlace (inscripción) y publicado (true/false para mostrarlo u ocultarlo sin borrarlo). La agenda solo muestra automáticamente los torneos cuya fecha_fin (o fecha_inicio si no hay fecha_fin) sea igual o posterior a hoy, y los ordena por fecha. La entrada 'Torneo de ejemplo' es solo una demostración: sustitúyela o ponla en publicado=false cuando tengas torneos reales.",
+  "_instrucciones": "Edita esta lista para gestionar la Agenda de Torneos. Cada entrada necesita: club, torneo, fecha_inicio (AAAA-MM-DD), fecha_fin (opcional, AAAA-MM-DD), ciudad, categorias, precio, enlace (inscripción) y publicado (true/false para mostrarlo u ocultarlo sin borrarlo). Opcionalmente, 'destacado': true muestra el torneo con una insignia dorada '★ Destacado' y lo coloca arriba de la lista (pensado como plaza de pago para clubes/organizadores que quieran más visibilidad — ver el aviso 'Destaca tu torneo' en la propia agenda). La agenda solo muestra automáticamente los torneos cuya fecha_fin (o fecha_inicio si no hay fecha_fin) sea igual o posterior a hoy, y los ordena por fecha (los destacados van primero). La entrada 'Torneo de ejemplo' es solo una demostración: sustitúyela o ponla en publicado=false cuando tengas torneos reales.",
   "torneos": [
     {
       "club": "Club Pádel Demo",
@@ -22,6 +22,7 @@
       "precio": "25 € una categoría / 45 € dos categorías",
       "enlace": "https://torneos.sportelia.es/#/tournaments-details/-OsFFvMg1r8lAXt4oV8-/public",
       "imagen": "carteles/cartel-prinsotel-6.jpg",
+      "destacado": true,
       "publicado": true
     },
     {
