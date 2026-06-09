@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pistas Libres — PadelPromos</title>
+  <meta name="description" content="Genera en segundos una story de Instagram con tus pistas libres. Con los colores y logo de tu club. Compatible con cualquier club de pádel.">
+  <link rel="canonical" href="https://padelpromos.es/pistas-libres">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500&family=DM+Serif+Display&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --g: #1D9E75; --gd: #0F6E56; --gl: #E1F5EE; --gm: #9FE1CB;
+      --text: #0f1a14; --text2: #4a5e54; --text3: #8aa096;
+      --bg: #ffffff; --bg2: #f5faf7; --bg3: #edf6f1;
+      --border: rgba(29,158,117,.15); --border2: rgba(29,158,117,.3);
+      --radius: 10px; --radius-lg: 14px;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'DM Sans', sans-serif; color: var(--text); background: var(--bg); line-height: 1.6; -webkit-font-smoothing: antialiased; }
+
+    /* NAV */
+    nav { position: sticky; top: 0; z-index: 100; background: rgba(255,255,255,.92); backdrop-filter: blur(12px); border-bottom: 0.5px solid var(--border2); padding: 0 40px; display: flex; align-items: center; justify-content: space-between; height: 60px; }
+    .nav-logo { font-size: 17px; font-weight: 500; color: var(--text); text-decoration: none; }
+    .nav-logo b { color: var(--g); font-weight: 500; }
+    .nav-links { display: flex; gap: 28px; list-style: none; }
+    .nav-links a { font-size: 14px; color: var(--text2); text-decoration: none; transition: color .2s; }
+    .nav-links a:hover { color: var(--text); }
+    .nav-cta { display: inline-flex; align-items: center; gap: 6px; padding: 9px 20px; background: var(--g); color: #fff; border-radius: var(--radius); font-size: 13px; font-weight: 500; text-decoration: none; transition: background .2s; }
+    .nav-cta:hover { background: var(--gd); }
+
+    /* HERO */
+    .hero { padding: 88px 40px 72px; text-align: center; border-bottom: 0.5px solid var(--border2); position: relative; overflow: hidden; }
+    .hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 60% 50% at 50% 0%, rgba(29,158,117,.06) 0%, transparent 70%); pointer-events: none; }
+    .hero-eyebrow { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; color: var(--gd); background: var(--gl); padding: 5px 14px; border-radius: 20px; margin-bottom: 22px; border: 0.5px solid var(--gm); }
+    h1 { font-family: 'DM Serif Display', serif; font-size: 48px; line-height: 1.12; letter-spacing: -.5px; color: var(--text); margin-bottom: 20px; font-weight: 400; }
+    h1 em { color: var(--g); font-style: italic; }
+    .hero-sub { font-size: 17px; color: var(--text2); line-height: 1.65; max-width: 500px; margin: 0 auto 36px; }
+    .hero-note { font-size: 12px; color: var(--text3); margin-top: 12px; }
+
+    /* STORY SHOWCASE */
+    .showcase { padding: 72px 40px; background: var(--bg2); }
+    .showcase-inner { max-width: 960px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+    .showcase-stories { display: flex; gap: 16px; justify-content: center; align-items: flex-end; }
+    .story-card { border-radius: 14px; overflow: hidden; box-shadow: 0 16px 48px rgba(0,0,0,.18); position: relative; flex-shrink: 0; }
+    .story-card.main { width: 160px; height: 284px; }
+    .story-card.side { width: 130px; height: 231px; opacity: .7; }
+    .story-bg { position: absolute; inset: 0; }
+    .story-body { position: absolute; inset: 0; display: flex; flex-direction: column; padding: 8% 7%; }
+    .story-overlay { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,.06) 0%, rgba(0,0,0,.5) 100%); }
+
+    /* Shared story styles */
+    .ss-top { text-align: center; padding-top: 4%; }
+    .ss-dia { font-family: 'DM Serif Display', serif; color: #fff; text-shadow: 1px 2px 6px rgba(0,0,0,.5); letter-spacing: 1px; line-height: .9; }
+    .ss-sub { font-family: 'DM Serif Display', serif; color: #fff; text-shadow: 1px 2px 6px rgba(0,0,0,.5); }
+    .ss-accent { height: 2px; background: linear-gradient(90deg, transparent, var(--accent, #8DC63F), transparent); margin: 5px auto; border-radius: 1px; width: 55%; }
+    .ss-cards { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 5px; }
+    .ss-card { border-radius: 6px; padding: 6px 8px; display: flex; align-items: center; gap: 6px; }
+    .ss-ico { flex-shrink: 0; }
+    .ss-ico svg { display: block; }
+    .ss-lbl { font-size: 5.5px; font-weight: 700; color: #fff; text-transform: uppercase; letter-spacing: .05em; opacity: .85; line-height: 1.2; }
+    .ss-hora { font-family: 'DM Serif Display', serif; line-height: 1; letter-spacing: 1px; }
+    .ss-foot { text-align: center; padding-bottom: 3%; }
+    .ss-tel { font-family: 'DM Serif Display', serif; color: #fff; letter-spacing: 1px; margin-bottom: 4px; }
+    .ss-badge { display: inline-block; border-radius: 4px; padding: 1px 6px; font-size: 5.5px; font-weight: 700; letter-spacing: .04em; }
+    .ss-pp { font-size: 5px; color: rgba(255,255,255,.55); margin-top: 3px; }
+
+    /* Showcase copy */
+    .showcase-copy {}
+    .section-label { font-size: 11px; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; color: var(--g); margin-bottom: 10px; }
+    h2 { font-family: 'DM Serif Display', serif; font-size: 34px; font-weight: 400; line-height: 1.2; color: var(--text); margin-bottom: 14px; letter-spacing: -.3px; }
+    .body-text { font-size: 15px; color: var(--text2); line-height: 1.72; }
+
+    /* STEPS */
+    .steps { padding: 72px 40px; }
+    .steps-inner { max-width: 760px; margin: 0 auto; }
+    .step-list { display: flex; flex-direction: column; gap: 0; margin-top: 36px; }
+    .step-item { display: flex; gap: 24px; padding: 24px 0; border-bottom: 0.5px solid var(--border2); }
+    .step-item:last-child { border-bottom: none; }
+    .step-num { width: 36px; height: 36px; border-radius: 50%; background: var(--g); color: #fff; font-size: 15px; font-weight: 500; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
+    .step-title { font-size: 16px; font-weight: 500; color: var(--text); margin-bottom: 5px; }
+    .step-body { font-size: 14px; color: var(--text2); line-height: 1.65; }
+
+    /* CLUBS */
+    .clubs { padding: 72px 40px; background: var(--bg2); }
+    .clubs-inner { max-width: 760px; margin: 0 auto; }
+    .club-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 28px; }
+    .club-card { background: var(--bg); border: 0.5px solid var(--border2); border-radius: var(--radius-lg); padding: 20px; }
+    .club-card-dot { width: 10px; height: 10px; border-radius: 50%; margin-bottom: 12px; }
+    .club-card-name { font-size: 14px; font-weight: 500; color: var(--text); margin-bottom: 4px; }
+    .club-card-url { font-size: 11px; color: var(--text3); font-family: monospace; }
+
+    /* INCLUDE */
+    .include { padding: 72px 40px; }
+    .include-inner { max-width: 760px; margin: 0 auto; }
+    .include-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-top: 28px; }
+    .inc-item { display: flex; align-items: flex-start; gap: 12px; padding: 16px; background: var(--bg2); border-radius: var(--radius); border: 0.5px solid var(--border2); }
+    .inc-ico { width: 36px; height: 36px; border-radius: 8px; background: var(--gl); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .inc-ico svg { width: 18px; height: 18px; color: var(--gd); }
+    .inc-title { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 3px; }
+    .inc-body { font-size: 12px; color: var(--text2); line-height: 1.55; }
+
+    /* CTA */
+    .cta-section { padding: 80px 40px; text-align: center; background: var(--g); }
+    .cta-section h2 { font-family: 'DM Serif Display', serif; font-size: 36px; font-weight: 400; color: #fff; line-height: 1.2; margin-bottom: 12px; }
+    .cta-section p { font-size: 15px; color: rgba(255,255,255,.75); margin-bottom: 28px; }
+    .btn-white { background: #fff; color: var(--g); border: none; padding: 14px 32px; font-size: 15px; font-weight: 500; border-radius: var(--radius); cursor: pointer; transition: opacity .2s; font-family: 'DM Sans', sans-serif; display: inline-flex; align-items: center; gap: 6px; text-decoration: none; }
+    .btn-white:hover { opacity: .92; }
+    .cta-note { font-size: 12px; color: rgba(255,255,255,.5); margin-top: 12px; }
+
+    /* BTN */
+    .btn { display: inline-flex; align-items: center; gap: 7px; padding: 13px 28px; background: var(--g); color: #fff; border: none; border-radius: var(--radius); font-size: 15px; font-weight: 500; text-decoration: none; cursor: pointer; transition: background .2s; font-family: 'DM Sans', sans-serif; }
+    .btn:hover { background: var(--gd); }
+    .btn-ghost { background: transparent; color: var(--g); border: 1.5px solid var(--g); }
+    .btn-ghost:hover { background: var(--gl); }
+
+    footer { padding: 28px 40px; border-top: 0.5px solid var(--border2); display: flex; align-items: center; justify-content: space-between; }
+    .footer-logo { font-size: 15px; font-weight: 500; color: var(--text); text-decoration: none; }
+    .footer-logo b { color: var(--g); font-weight: 500; }
+    .footer-note { font-size: 12px; color: var(--text3); }
+
+    .fi { opacity: 0; transform: translateY(18px); transition: opacity .5s ease, transform .5s ease; }
+    .fi.v { opacity: 1; transform: translateY(0); }
+    .d1 { transition-delay: .1s; } .d2 { transition-delay: .2s; } .d3 { transition-delay: .3s; }
+
+    @media (max-width: 768px) {
+      nav { padding: 0 20px; }
+      .nav-links { display: none; }
+      h1 { font-size: 32px; }
+      .hero { padding: 64px 20px 52px; }
+      .showcase { padding: 52px 20px; }
+      .showcase-inner { grid-template-columns: 1fr; gap: 36px; }
+      .steps, .clubs, .include { padding: 52px 20px; }
+      .club-cards { grid-template-columns: 1fr; }
+      .include-grid { grid-template-columns: 1fr; }
+      .cta-section { padding: 60px 20px; }
+      footer { flex-direction: column; gap: 14px; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="nav-logo">Padel<b>Promos</b></a>
+  <ul class="nav-links">
+    <li><a href="/">Inicio</a></li>
+    <li><a href="generador.html">Generador de torneos</a></li>
+    <li><a href="pistas-libres.html" style="color:#1D9E75;font-weight:500;display:flex;align-items:center;gap:5px"><span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#1D9E75;flex-shrink:0"></span>Pistas Libres</a></li>
+    <li><a href="precios.html">Precios</a></li>
+  </ul>
+  <a href="mailto:hola@padelpromos.es" class="nav-cta">Solicitar acceso →</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-eyebrow fi">
+    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+    Pistas Libres · Nuevo en PadelPromos
+  </div>
+  <h1 class="fi d1">Anuncia tus pistas libres<br><em>cada día en segundos.</em></h1>
+  <p class="hero-sub fi d2">Entra a tu panel, selecciona las pistas disponibles y genera una story lista para publicar en Instagram — con los colores y el logo de tu club.</p>
+  <div class="fi d3">
+    <a href="mailto:hola@padelpromos.es?subject=Quiero acceso a Pistas Libres&body=Hola, me interesa el módulo de pistas libres de PadelPromos para mi club." class="btn" style="font-size:16px;padding:14px 32px">Solicitar mi acceso →</a>
+    <p class="hero-note">Incluido en los planes Club, Pro y Agencia · Configuración en menos de 24h</p>
+  </div>
+</section>
+
+<!-- SHOWCASE -->
+<section class="showcase">
+  <div class="showcase-inner">
+    <div class="showcase-stories fi">
+      <!-- Story 1: Asnimo (azul/verde) -->
+      <div class="story-card side">
+        <div class="story-bg" style="background:#0d2a1a"></div>
+        <svg style="position:absolute;inset:0;width:100%;height:100%" viewBox="0 0 130 231" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+          <rect width="130" height="231" fill="#0d2a1a"/>
+          <line x1="65" y1="0" x2="-5" y2="120" stroke="rgba(255,255,255,.09)" stroke-width="18"/>
+          <line x1="65" y1="0" x2="135" y2="120" stroke="rgba(255,255,255,.09)" stroke-width="18"/>
+          <circle cx="98" cy="68" r="14" fill="#b5e853" opacity=".8"/>
+        </svg>
+        <div class="story-overlay"></div>
+        <div class="story-body" style="z-index:3">
+          <div class="ss-top">
+            <div class="ss-dia" style="font-size:17px">SÁBADO</div>
+            <div class="ss-sub" style="font-size:13px">PISTA <span style="color:#4ade80">LIBRE</span></div>
+            <div class="ss-accent" style="--accent:#4ade80"></div>
+          </div>
+          <div class="ss-cards">
+            <div class="ss-card" style="background:rgba(74,222,128,.12);border:1px solid rgba(74,222,128,.3)">
+              <div class="ss-ico"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="1.5"><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="6.34" y2="6.34"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="19.07" y1="4.93" x2="17.66" y2="6.34"/></svg></div>
+              <div><div class="ss-lbl">DESCUBIERTA</div><div class="ss-hora" style="color:#4ade80;font-size:16px">10<span style="font-size:11px;opacity:.75">:00</span></div></div>
+            </div>
+            <div class="ss-card" style="background:rgba(74,222,128,.12);border:1px solid rgba(74,222,128,.3)">
+              <div class="ss-ico"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="1.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+              <div><div class="ss-lbl">CUBIERTA</div><div class="ss-hora" style="color:#4ade80;font-size:16px">12<span style="font-size:11px;opacity:.75">:00</span></div></div>
+            </div>
+          </div>
+          <div class="ss-foot">
+            <div class="ss-tel" style="font-size:9px">971 12 34 56</div>
+            <div class="ss-badge" style="background:rgba(74,222,128,.2);color:#4ade80;border:0.5px solid rgba(74,222,128,.3)">MI CLUB PÁDEL</div>
+            <div class="ss-pp">PadelPromos.es</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Story 2: Asnimo (main, azul marino/lime) -->
+      <div class="story-card main" id="mainStory">
+        <div class="story-bg" style="background:#1a2d4a"></div>
+        <svg style="position:absolute;inset:0;width:100%;height:100%" viewBox="0 0 160 284" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+          <rect width="160" height="284" fill="#1a2d4a"/>
+          <pattern id="md" x="0" y="0" width="12" height="12" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r=".7" fill="rgba(255,255,255,.028)"/></pattern>
+          <rect width="160" height="284" fill="url(#md)"/>
+          <line x1="80" y1="0" x2="-8" y2="148" stroke="rgba(255,255,255,.11)" stroke-width="22"/>
+          <line x1="80" y1="0" x2="168" y2="148" stroke="rgba(255,255,255,.11)" stroke-width="22"/>
+          <circle cx="118" cy="100" r="17" fill="#b5e853" opacity=".85"/>
+          <path d="M106 91 Q118 100 106 109" fill="none" stroke="white" stroke-width="1.5" opacity=".5"/>
+          <path d="M130 91 Q118 100 130 109" fill="none" stroke="white" stroke-width="1.5" opacity=".5"/>
+        </svg>
+        <div class="story-overlay"></div>
+        <div class="story-body" style="z-index:3" id="mainStoryBody">
+          <!-- rendered by JS -->
+        </div>
+      </div>
+
+      <!-- Story 3: Padel Match (verde neón / negro) -->
+      <div class="story-card side">
+        <div class="story-bg" style="background:#0a0f0a"></div>
+        <svg style="position:absolute;inset:0;width:100%;height:100%" viewBox="0 0 130 231" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+          <rect width="130" height="231" fill="#0a0f0a"/>
+          <line x1="65" y1="0" x2="-5" y2="120" stroke="rgba(57,255,20,.08)" stroke-width="18"/>
+          <line x1="65" y1="0" x2="135" y2="120" stroke="rgba(57,255,20,.08)" stroke-width="18"/>
+          <circle cx="98" cy="68" r="14" fill="#b5e853" opacity=".8"/>
+        </svg>
+        <div class="story-overlay"></div>
+        <div class="story-body" style="z-index:3">
+          <div class="ss-top">
+            <div class="ss-dia" style="font-size:17px">DOMINGO</div>
+            <div class="ss-sub" style="font-size:13px">PISTA <span style="color:#39FF14">LIBRE</span></div>
+            <div class="ss-accent" style="--accent:#39FF14"></div>
+          </div>
+          <div class="ss-cards">
+            <div class="ss-card" style="background:rgba(57,255,20,.1);border:1px solid rgba(57,255,20,.3)">
+              <div class="ss-ico"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#39FF14" stroke-width="1.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+              <div><div class="ss-lbl">CUBIERTA</div><div class="ss-hora" style="color:#39FF14;font-size:16px">17<span style="font-size:11px;opacity:.75">:00</span></div></div>
+            </div>
+          </div>
+          <div class="ss-foot">
+            <div class="ss-tel" style="font-size:9px">971 27 28 29</div>
+            <div class="ss-badge" style="background:rgba(57,255,20,.15);color:#39FF14;border:0.5px solid rgba(57,255,20,.3)">PADEL MATCH</div>
+            <div class="ss-pp">PadelPromos.es</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="showcase-copy fi d1">
+      <div class="section-label">Para todos tus clubs</div>
+      <h2>Cada club, su story.<br>Su color. Su logo.</h2>
+      <p class="body-text" style="margin-bottom:20px">No es una plantilla genérica. Cada club tiene su panel privado con sus colores corporativos, su logo y su teléfono. La story sale personalizada desde el primer día.</p>
+      <p class="body-text">Y nadie más puede acceder al panel de otro club — cada uno tiene su URL única y secreta.</p>
+    </div>
+  </div>
+</section>
+
+<!-- STEPS -->
+<section class="steps">
+  <div class="steps-inner">
+    <div class="section-label fi">Cómo funciona</div>
+    <h2 class="fi">De cero a story publicada<br>en menos de un minuto.</h2>
+    <div class="step-list">
+      <div class="step-item fi">
+        <div class="step-num">1</div>
+        <div>
+          <div class="step-title">Contratas el servicio</div>
+          <div class="step-body">Nos mandas el nombre del club, teléfono, colores y logo. En menos de 24 horas te enviamos la URL única de tu panel.</div>
+        </div>
+      </div>
+      <div class="step-item fi d1">
+        <div class="step-num">2</div>
+        <div>
+          <div class="step-title">Cada día entras a tu panel</div>
+          <div class="step-body">Seleccionas el día de la semana y añades las pistas disponibles: tipo (cubierta o descubierta) y hora. Puedes añadir hasta 3 pistas.</div>
+        </div>
+      </div>
+      <div class="step-item fi d2">
+        <div class="step-num">3</div>
+        <div>
+          <div class="step-title">Generas la story</div>
+          <div class="step-body">Pulsas el botón y la herramienta genera una imagen PNG de 1080×1920 px con los colores de tu club, listo para publicar en Instagram Stories.</div>
+        </div>
+      </div>
+      <div class="step-item fi d3">
+        <div class="step-num">4</div>
+        <div>
+          <div class="step-title">Descargas o compartes directamente</div>
+          <div class="step-body">Descarga el PNG o compártelo directamente desde el móvil a WhatsApp, Instagram, Telegram o cualquier app instalada. Sin copiar, sin pegar, sin Canva.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CLUBS EXAMPLE -->
+<section class="clubs">
+  <div class="clubs-inner">
+    <div class="section-label fi">Clubs ya configurados</div>
+    <h2 class="fi">Cada club, su propia URL privada.</h2>
+    <p class="body-text fi">Así es como se ven los accesos de los clubs. Solo ellos conocen su enlace.</p>
+    <div class="club-cards">
+      <div class="club-card fi">
+        <div class="club-card-dot" style="background:#8DC63F"></div>
+        <div class="club-card-name">Asnimo Pádel</div>
+        <div class="club-card-url">padelpromos.es/club/asnimo-p4d3l</div>
+      </div>
+      <div class="club-card fi d1">
+        <div class="club-card-dot" style="background:#39FF14"></div>
+        <div class="club-card-name">Padel Match</div>
+        <div class="club-card-url">padelpromos.es/club/padelmatch-k8v2x</div>
+      </div>
+      <div class="club-card fi d2">
+        <div class="club-card-dot" style="background:#38bdf8"></div>
+        <div class="club-card-name">Sa Cabana Padel</div>
+        <div class="club-card-url">padelpromos.es/club/sacabana-p9r4w</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- INCLUDE -->
+<section class="include">
+  <div class="include-inner">
+    <div class="section-label fi">Qué incluye</div>
+    <h2 class="fi">Todo lo que necesitas,<br>sin complicaciones.</h2>
+    <div class="include-grid">
+      <div class="inc-item fi">
+        <div class="inc-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg></div>
+        <div><div class="inc-title">Panel privado por club</div><div class="inc-body">URL única y secreta. Solo el club puede acceder a su panel.</div></div>
+      </div>
+      <div class="inc-item fi d1">
+        <div class="inc-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+        <div><div class="inc-title">Story en menos de 30 segundos</div><div class="inc-body">Selecciona, genera, descarga. Sin diseño, sin Canva, sin esperar.</div></div>
+      </div>
+      <div class="inc-item fi">
+        <div class="inc-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></div>
+        <div><div class="inc-title">Compartir nativo en móvil</div><div class="inc-body">WhatsApp, Instagram, Telegram — el menú nativo del móvil con la imagen adjunta.</div></div>
+      </div>
+      <div class="inc-item fi d1">
+        <div class="inc-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+        <div><div class="inc-title">Colores y logo del club</div><div class="inc-body">Cada story sale con la identidad visual del club. Nada genérico.</div></div>
+      </div>
+      <div class="inc-item fi">
+        <div class="inc-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></div>
+        <div><div class="inc-title">PNG 1080×1920 px</div><div class="inc-body">Formato perfecto para Instagram Stories, listo para publicar sin retoques.</div></div>
+      </div>
+      <div class="inc-item fi d1">
+        <div class="inc-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="20 6 9 17 4 12"/></svg></div>
+        <div><div class="inc-title">Configuración incluida</div><div class="inc-body">Nos encargamos nosotros. En menos de 24h tienes tu panel listo.</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <h2>¿Tienes un club de pádel?</h2>
+  <p>Escríbenos y en menos de 24 horas tienes tu panel configurado<br>con los colores y logo de tu club.</p>
+  <a href="mailto:hola@padelpromos.es?subject=Quiero acceso a Pistas Libres&body=Hola, me interesa el módulo de pistas libres de PadelPromos. Mi club es:" class="btn-white">Solicitar acceso gratuito →</a>
+  <p class="cta-note">Incluido en los planes Club (15€/mes), Pro (25€/mes) y Agencia (39€/mes)</p>
+</section>
+
+<footer>
+  <a href="/" class="footer-logo">Padel<b>Promos</b></a>
+  <span class="footer-note">© 2026 PadelPromos.es · <a href="mailto:hola@padelpromos.es" style="color:inherit;text-decoration:none">hola@padelpromos.es</a></span>
+</footer>
+
+<script>
+// Animated main story
+(function(){
+  var dias=['LUNES','MARTES','MIÉRCOLES','JUEVES','VIERNES','SÁBADO','DOMINGO'];
+  var schedules=[
+    [{t:'descubierta',h:'17:00'},{t:'cubierta',h:'19:30'}],
+    [{t:'cubierta',h:'18:00'}],
+    [{t:'descubierta',h:'16:30'},{t:'descubierta',h:'18:30'},{t:'cubierta',h:'20:00'}],
+    [{t:'cubierta',h:'17:30'},{t:'cubierta',h:'19:00'}],
+    [{t:'descubierta',h:'18:30'},{t:'cubierta',h:'20:00'}],
+    [{t:'descubierta',h:'10:00'},{t:'descubierta',h:'12:00'},{t:'cubierta',h:'18:00'}],
+    [{t:'cubierta',h:'11:00'},{t:'descubierta',h:'17:00'}],
+  ];
+  var idx = new Date().getDay();
+
+  function ico(t){
+    if(t==='cubierta') return '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8DC63F" stroke-width="1.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>';
+    return '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8DC63F" stroke-width="1.5"><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="6.34" y2="6.34"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="19.07" y1="4.93" x2="17.66" y2="6.34"/></svg>';
+  }
+
+  function render(){
+    var ps = schedules[idx];
+    var cards = '';
+    ps.slice(0,3).forEach(function(p){
+      var pts = p.h.split(':');
+      cards += '<div class="ss-card" style="background:rgba(141,198,63,.12);border:1px solid rgba(141,198,63,.3)">'
+        +'<div class="ss-ico">'+ico(p.t)+'</div>'
+        +'<div>'
+        +'<div class="ss-lbl">'+(p.t==='cubierta'?'LIBRE CUBIERTA':'LIBRE DESCUBIERTA')+'</div>'
+        +'<div class="ss-hora" style="color:#8DC63F;font-size:20px">'+pts[0]+'<span style="font-size:13px;opacity:.75">:'+pts[1]+'</span></div>'
+        +'</div></div>';
+    });
+
+    var body = document.getElementById('mainStoryBody');
+    body.style.opacity='0';
+    body.style.transform='translateY(6px)';
+    setTimeout(function(){
+      body.innerHTML =
+        '<div class="ss-top">'
+        +'<div class="ss-dia" style="font-size:22px">'+dias[idx]+'</div>'
+        +'<div class="ss-sub" style="font-size:17px">PISTA <span style="color:#8DC63F">LIBRE</span></div>'
+        +'<div class="ss-accent" style="--accent:#8DC63F"></div>'
+        +'</div>'
+        +'<div class="ss-cards">'+cards+'</div>'
+        +'<div class="ss-foot">'
+        +'<div class="ss-tel" style="font-size:11px">971 77 30 34</div>'
+        +'<div class="ss-badge" style="background:rgba(141,198,63,.2);color:#8DC63F;border:0.5px solid rgba(141,198,63,.3)">ASNIMO PÁDEL</div>'
+        +'<div class="ss-pp">PadelPromos.es</div>'
+        +'</div>';
+      body.style.transition='opacity .4s ease,transform .4s ease';
+      body.style.opacity='1';
+      body.style.transform='translateY(0)';
+    },200);
+  }
+
+  render();
+  setInterval(function(){ idx=(idx+1)%7; render(); }, 2600);
+})();
+
+// Scroll animations
+var obs = new IntersectionObserver(function(entries){
+  entries.forEach(function(e){ if(e.isIntersecting){e.target.classList.add('v');obs.unobserve(e.target);} });
+},{threshold:0.1});
+document.querySelectorAll('.fi').forEach(function(el){obs.observe(el);});
+</script>
+</body>
+</html>

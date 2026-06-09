@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pistas Libres — PadelPromos</title>
+<meta name="description" content="Genera tu story de pistas libres en segundos.">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --g:#1D9E75;--gd:#0F6E56;--gl:#E1F5EE;--gm:#9FE1CB;
+  --text:#0f1a14;--text2:#4a5e54;--text3:#8aa096;
+  --bg:#fff;--bg2:#f5faf7;--border:rgba(29,158,117,.25);
+  --radius:10px;--radius-lg:14px;
+}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--bg2);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased}
+
+/* NAV */
+nav{background:rgba(255,255,255,.95);backdrop-filter:blur(12px);border-bottom:0.5px solid var(--border);padding:0 28px;display:flex;align-items:center;justify-content:space-between;height:56px;position:sticky;top:0;z-index:50}
+.nav-logo{font-size:16px;font-weight:500;color:var(--text);text-decoration:none}.nav-logo b{color:var(--g);font-weight:500}
+.nav-club{font-size:13px;color:var(--text2);display:flex;align-items:center;gap:6px}
+.nav-club-dot{width:7px;height:7px;border-radius:50%;background:var(--g)}
+
+/* LOADING / ERROR */
+.state-screen{min-height:calc(100vh - 56px);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px}
+.state-ico{font-size:48px;margin-bottom:16px}
+.state-title{font-size:20px;font-weight:500;color:var(--text);margin-bottom:8px}
+.state-body{font-size:14px;color:var(--text2);line-height:1.65;max-width:380px}
+.spinner{width:36px;height:36px;border:3px solid var(--gl);border-top-color:var(--g);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 20px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* LAYOUT */
+.layout{display:grid;grid-template-columns:300px 1fr;min-height:calc(100vh - 56px)}
+
+/* CONFIG PANEL */
+.cfg{background:var(--bg);border-right:0.5px solid var(--border);padding:24px 20px;overflow-y:auto}
+.cfg-title{font-size:14px;font-weight:500;color:var(--text);margin-bottom:4px}
+.cfg-sub{font-size:12px;color:var(--text3);margin-bottom:22px}
+.cfg-sec{margin-bottom:22px;padding-bottom:22px;border-bottom:0.5px solid rgba(29,158,117,.12)}
+.cfg-sec:last-of-type{border-bottom:none;padding-bottom:0;margin-bottom:0}
+.cfg-lbl{font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--g);margin-bottom:10px}
+.field{margin-bottom:10px}
+.field label{display:block;font-size:11px;color:var(--text2);margin-bottom:4px;font-weight:500}
+.field select{width:100%;padding:9px 12px;border:0.5px solid var(--border);border-radius:var(--radius);font-size:13px;font-family:'DM Sans',sans-serif;color:var(--text);background:var(--bg);outline:none;cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238aa096' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:30px}
+
+/* PISTAS */
+.pista-row{display:flex;align-items:center;gap:6px;margin-bottom:7px;background:var(--bg2);padding:9px 10px;border-radius:8px;border:0.5px solid var(--border)}
+.ptipo{display:flex;gap:3px}
+.ptipo button{padding:4px 7px;border:0.5px solid var(--border);border-radius:5px;font-size:10px;cursor:pointer;background:none;color:var(--text2);font-family:'DM Sans',sans-serif;transition:all .15s;white-space:nowrap}
+.ptipo button.on{background:var(--g);color:#fff;border-color:var(--g)}
+.ptime{flex:1;padding:6px 8px;border:0.5px solid var(--border);border-radius:6px;font-size:12px;font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);outline:none;text-align:center;min-width:0;transition:border-color .2s}
+.ptime:focus{border-color:var(--g)}
+.pdel{width:22px;height:22px;border:none;background:none;cursor:pointer;color:var(--text3);font-size:18px;border-radius:4px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s;line-height:1}
+.pdel:hover{background:rgba(220,50,50,.1);color:#d03}
+.add-btn{width:100%;padding:8px;border:0.5px dashed var(--border);border-radius:8px;background:none;font-size:12px;color:var(--g);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;margin-top:2px}
+.add-btn:hover{background:rgba(29,158,117,.05);border-color:var(--g);border-style:solid}
+
+.gen-btn{width:100%;padding:12px;background:var(--g);color:#fff;border:none;border-radius:var(--radius);font-size:13px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background .2s;margin-top:14px;display:flex;align-items:center;justify-content:center;gap:7px}
+.gen-btn:hover{background:var(--gd)}
+
+/* PREVIEW */
+.preview{padding:32px 24px;display:flex;flex-direction:column;align-items:center;gap:18px}
+.preview-header{display:flex;align-items:center;justify-content:space-between;width:100%;max-width:340px}
+.preview-label{font-size:10px;font-weight:500;color:var(--text3);letter-spacing:.08em;text-transform:uppercase}
+.variant-btns{display:flex;gap:6px}
+.vbtn{padding:5px 11px;border:0.5px solid var(--border);border-radius:6px;font-size:11px;cursor:pointer;background:var(--bg);color:var(--text2);font-family:'DM Sans',sans-serif;transition:all .15s}
+.vbtn:hover{border-color:var(--g);color:var(--g)}
+
+/* STORY CANVAS */
+.story-outer{width:100%;max-width:340px;aspect-ratio:9/16;border-radius:18px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.22);position:relative}
+#storyCanvas{width:100%;height:100%;position:absolute;inset:0}
+
+/* STORY LAYERS */
+.s-bg{position:absolute;inset:0;z-index:0}
+.s-svg{position:absolute;inset:0;z-index:1;width:100%;height:100%}
+.s-overlay{position:absolute;inset:0;z-index:2;background:linear-gradient(180deg,rgba(0,0,0,.08) 0%,rgba(0,0,0,.52) 100%)}
+.s-body{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;padding:6% 7%}
+
+/* STORY CONTENT */
+.s-head{text-align:center;padding-top:4%}
+.s-dia{font-family:'Bebas Neue',cursive;color:#fff;text-shadow:2px 3px 10px rgba(0,0,0,.5);letter-spacing:1px;line-height:.88;font-size:clamp(40px,11vw,68px)}
+.s-sub{font-family:'Bebas Neue',cursive;color:#fff;text-shadow:2px 3px 10px rgba(0,0,0,.5);letter-spacing:1px;line-height:.92;font-size:clamp(30px,8.5vw,54px)}
+
+.s-cards{flex:1;display:flex;flex-direction:column;justify-content:center;gap:3%}
+.s-card{border-radius:10px;padding:4% 5%;display:flex;align-items:center;gap:5%;backdrop-filter:blur(10px)}
+.s-ico{flex-shrink:0;width:clamp(22px,7%,38px);height:clamp(22px,7%,38px)}
+.s-ico svg{width:100%;height:100%}
+.s-lbl{font-size:clamp(8px,2.2vw,11px);font-weight:700;color:#fff;text-transform:uppercase;letter-spacing:.07em;opacity:.85;line-height:1.2}
+.s-hora{font-family:'Bebas Neue',cursive;line-height:1;letter-spacing:2px;font-size:clamp(32px,9vw,54px)}
+
+.s-foot{padding-bottom:4%}
+.s-tel-row{display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:4%}
+.s-tel-ico svg{width:clamp(12px,3.5vw,17px);height:clamp(12px,3.5vw,17px);color:#fff}
+.s-tel-num{font-family:'Bebas Neue',cursive;color:#fff;letter-spacing:2px;font-size:clamp(16px,5vw,26px)}
+.s-logos{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap}
+.s-club-badge{border-radius:6px;padding:3px 10px;font-size:clamp(7px,2vw,10px);font-weight:700;color:#fff;letter-spacing:.05em;white-space:nowrap}
+.s-club-logo{height:clamp(18px,5%,28px);object-fit:contain;filter:brightness(0) invert(1)}
+.s-pp{display:flex;align-items:center;gap:3px;opacity:.7}
+.s-pp-dot{width:5px;height:5px;border-radius:50%}
+.s-pp-txt{font-size:clamp(6px,1.8vw,9px);font-weight:500;color:#fff;letter-spacing:.04em}
+
+/* ACTION BUTTONS */
+.actions{display:flex;flex-direction:column;gap:10px;width:100%;max-width:340px}
+.act-row{display:flex;gap:10px}
+.act{flex:1;padding:11px 10px;border:0.5px solid var(--border);border-radius:var(--radius);background:var(--bg);font-size:12px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;color:var(--text);transition:all .2s;display:flex;align-items:center;justify-content:center;gap:6px}
+.act:hover{border-color:var(--g);color:var(--g)}
+.act.primary{background:var(--g);color:#fff;border-color:var(--g)}
+.act.primary:hover{background:var(--gd)}
+.act.primary:disabled{opacity:.5;cursor:not-allowed}
+.act svg{width:14px;height:14px;flex-shrink:0}
+
+/* SHARE MENU */
+.share-menu{background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:16px;width:100%}
+.share-title{font-size:11px;font-weight:500;color:var(--text2);margin-bottom:12px;text-align:center}
+.share-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.share-item{display:flex;flex-direction:column;align-items:center;gap:5px;padding:10px 6px;border:0.5px solid var(--border);border-radius:var(--radius);cursor:pointer;transition:all .15s;background:none;font-family:'DM Sans',sans-serif}
+.share-item:hover{border-color:var(--g);background:var(--gl)}
+.share-ico{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px}
+.share-lbl{font-size:10px;color:var(--text2);font-weight:500}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--text);color:var(--bg);padding:10px 20px;border-radius:var(--radius);font-size:13px;font-family:'DM Sans',sans-serif;opacity:0;transition:opacity .3s;pointer-events:none;z-index:999;white-space:nowrap}
+.toast.show{opacity:1}
+
+/* GENERATING OVERLAY */
+.gen-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;display:none;align-items:center;justify-content:center;flex-direction:column;gap:16px}
+.gen-overlay.show{display:flex}
+.gen-overlay-box{background:var(--bg);border-radius:var(--radius-lg);padding:32px 40px;text-align:center}
+.gen-overlay-spin{width:40px;height:40px;border:3px solid var(--gl);border-top-color:var(--g);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 16px}
+.gen-overlay-txt{font-size:14px;color:var(--text2)}
+
+@media(max-width:768px){
+  .layout{grid-template-columns:1fr}
+  .cfg{border-right:none;border-bottom:0.5px solid var(--border)}
+  .preview{padding:24px 16px}
+  nav{padding:0 16px}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="nav-logo">Padel<b>Promos</b></a>
+  <div class="nav-club">
+    <div class="nav-club-dot" id="navDot"></div>
+    <span id="navClubName">Cargando...</span>
+  </div>
+</nav>
+
+<!-- LOADING -->
+<div class="state-screen" id="screenLoading">
+  <div class="spinner"></div>
+  <div class="state-title">Cargando tu panel...</div>
+  <div class="state-body">Un momento</div>
+</div>
+
+<!-- ERROR -->
+<div class="state-screen" id="screenError" style="display:none">
+  <div class="state-ico">🔒</div>
+  <div class="state-title">Acceso no válido</div>
+  <div class="state-body">Este enlace no existe o ha caducado. Si crees que es un error, contacta con PadelPromos.</div>
+</div>
+
+<!-- MAIN APP -->
+<div class="layout" id="appMain" style="display:none">
+
+  <!-- CONFIG -->
+  <div class="cfg">
+    <div class="cfg-title" id="cfgClubName">Mi Club</div>
+    <div class="cfg-sub">Genera tu story de pistas libres</div>
+
+    <div class="cfg-sec">
+      <div class="cfg-lbl">Día de la semana</div>
+      <div class="field">
+        <select id="c-dia" onchange="render()">
+          <option>LUNES</option><option>MARTES</option><option>MIÉRCOLES</option>
+          <option>JUEVES</option><option>VIERNES</option><option>SÁBADO</option><option>DOMINGO</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="cfg-sec">
+      <div class="cfg-lbl">Pistas disponibles hoy</div>
+      <div id="plist"></div>
+      <button class="add-btn" onclick="addP()">+ Añadir pista</button>
+    </div>
+
+    <button class="gen-btn" id="genBtn" onclick="generateAndShare()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+      Generar story
+    </button>
+  </div>
+
+  <!-- PREVIEW -->
+  <div class="preview">
+    <div class="preview-header">
+      <div class="preview-label">Vista previa · 9:16</div>
+      <div class="variant-btns">
+        <button class="vbtn" onclick="prevV()">← Color</button>
+        <button class="vbtn" onclick="nextV()">Color →</button>
+      </div>
+    </div>
+
+    <div class="story-outer">
+      <div id="storyCanvas">
+        <div class="s-bg" id="s-bg"></div>
+        <svg class="s-svg" viewBox="0 0 360 640" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+          <rect id="sv-bg" width="360" height="640" fill="#0d2040"/>
+          <pattern id="dp" x="0" y="0" width="22" height="22" patternUnits="userSpaceOnUse">
+            <circle cx="2" cy="2" r="1" fill="rgba(255,255,255,.035)"/>
+          </pattern>
+          <rect width="360" height="640" fill="url(#dp)"/>
+          <line x1="180" y1="0" x2="-20" y2="340" stroke="rgba(255,255,255,.1)" stroke-width="34"/>
+          <line x1="180" y1="0" x2="380" y2="340" stroke="rgba(255,255,255,.1)" stroke-width="34"/>
+          <line x1="0" y1="330" x2="360" y2="330" stroke="rgba(255,255,255,.06)" stroke-width="3"/>
+          <circle cx="272" cy="190" r="30" fill="#b5e853" opacity=".88"/>
+          <path d="M250 175 Q272 190 250 205" fill="none" stroke="white" stroke-width="2" opacity=".55"/>
+          <path d="M294 175 Q272 190 294 205" fill="none" stroke="white" stroke-width="2" opacity=".55"/>
+        </svg>
+        <div class="s-overlay"></div>
+        <div class="s-body" id="s-body"></div>
+      </div>
+    </div>
+
+    <div class="actions" id="actionsArea">
+      <div class="act-row">
+        <button class="act primary" id="btnGenerar" onclick="generateAndShare()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Descargar PNG
+        </button>
+        <button class="act" onclick="shareNative()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+          Compartir
+        </button>
+      </div>
+
+      <!-- SHARE MENU -->
+      <div class="share-menu" id="shareMenu" style="display:none">
+        <div class="share-title">Compartir story en...</div>
+        <div class="share-grid">
+          <button class="share-item" onclick="shareWA()">
+            <div class="share-ico" style="background:#25D366">📱</div>
+            <span class="share-lbl">WhatsApp</span>
+          </button>
+          <button class="share-item" onclick="shareIG()">
+            <div class="share-ico" style="background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888)">📸</div>
+            <span class="share-lbl">Instagram</span>
+          </button>
+          <button class="share-item" onclick="shareTG()">
+            <div class="share-ico" style="background:#2AABEE">✈️</div>
+            <span class="share-lbl">Telegram</span>
+          </button>
+          <button class="share-item" onclick="copyLink()">
+            <div class="share-ico" style="background:#6366f1">🔗</div>
+            <span class="share-lbl">Copiar enlace</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div style="font-size:11px;color:var(--text3);text-align:center;max-width:340px;line-height:1.6;padding:0 10px">
+      Story generada como imagen 1080×1920 px lista para publicar en Instagram.
+    </div>
+  </div>
+</div>
+
+<!-- GENERATING OVERLAY -->
+<div class="gen-overlay" id="genOverlay">
+  <div class="gen-overlay-box">
+    <div class="gen-overlay-spin"></div>
+    <div class="gen-overlay-txt">Generando imagen...</div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ─── STATE ───────────────────────────────────────────────
+var club = null;
+var pistas = [{tipo:'descubierta',hora:'18:30'},{tipo:'cubierta',hora:'20:00'}];
+var generatedBlob = null;
+var vIdx = 0;
+var VS = [
+  {c1:null,c2:null},  // will be set from club data
+  {c1:'#FF6600',c2:'#0f0800'},
+  {c1:'#38bdf8',c2:'#071628'},
+  {c1:'#facc15',c2:'#1a1200'},
+  {c1:'#f472b6',c2:'#1a0512'},
+  {c1:'#a78bfa',c2:'#0d0820'},
+];
+
+// ─── INIT ─────────────────────────────────────────────────
+async function init() {
+  // Extract token from URL path: /club/TOKEN
+  var path = window.location.pathname;
+  var parts = path.split('/').filter(Boolean);
+  var token = parts[parts.length - 1];
+
+  if (!token || token === 'club') {
+    showError(); return;
+  }
+
+  try {
+    var res = await fetch('/api/club?token=' + encodeURIComponent(token));
+    if (!res.ok) { showError(); return; }
+    club = await res.json();
+
+    // Set club color as first variant
+    VS[0].c1 = club.colorAccento;
+    VS[0].c2 = club.colorFondo;
+
+    // Set today's day
+    var dias = ['DOMINGO','LUNES','MARTES','MIÉRCOLES','JUEVES','VIERNES','SÁBADO'];
+    var today = dias[new Date().getDay()];
+    var sel = document.getElementById('c-dia');
+    for (var i = 0; i < sel.options.length; i++) {
+      if (sel.options[i].value === today) { sel.selectedIndex = i; break; }
+    }
+
+    document.getElementById('navClubName').textContent = club.nombre;
+    document.getElementById('cfgClubName').textContent = club.nombre;
+    document.getElementById('screenLoading').style.display = 'none';
+    document.getElementById('appMain').style.display = 'grid';
+
+    renderPList();
+    render();
+  } catch(e) {
+    showError();
+  }
+}
+
+function showError() {
+  document.getElementById('screenLoading').style.display = 'none';
+  document.getElementById('screenError').style.display = 'flex';
+}
+
+// ─── PISTAS ───────────────────────────────────────────────
+function renderPList() {
+  var el = document.getElementById('plist');
+  el.innerHTML = '';
+  pistas.forEach(function(p,i) {
+    var d = document.createElement('div');
+    d.className = 'pista-row';
+    d.innerHTML =
+      '<div class="ptipo">'
+      +'<button class="'+(p.tipo==='descubierta'?'on':'')+'" onclick="setT('+i+',\'descubierta\')">☀ Desc.</button>'
+      +'<button class="'+(p.tipo==='cubierta'?'on':'')+'" onclick="setT('+i+',\'cubierta\')">⌂ Cub.</button>'
+      +'</div>'
+      +'<input class="ptime" type="time" value="'+p.hora+'" onchange="setH('+i+',this.value)">'
+      +'<button class="pdel" onclick="delP('+i+')" title="Eliminar">×</button>';
+    el.appendChild(d);
+  });
+}
+function setT(i,t){pistas[i].tipo=t;renderPList();render();}
+function setH(i,h){pistas[i].hora=h;render();}
+function delP(i){pistas.splice(i,1);renderPList();render();}
+function addP(){pistas.push({tipo:'descubierta',hora:'19:00'});renderPList();render();}
+
+// ─── VARIANTS ─────────────────────────────────────────────
+function prevV(){vIdx=(vIdx-1+VS.length)%VS.length;render();}
+function nextV(){vIdx=(vIdx+1)%VS.length;render();}
+
+// ─── RENDER STORY ─────────────────────────────────────────
+function hexToRgb(h){
+  return [parseInt(h.slice(1,3),16),parseInt(h.slice(3,5),16),parseInt(h.slice(5,7),16)].join(',');
+}
+function fmtHora(h){
+  var p=h.split(':');
+  return '<span>'+p[0]+'</span><span style="font-size:68%;opacity:.72">:'+p[1]+'</span>';
+}
+
+function render() {
+  if (!club) return;
+  var v = VS[vIdx];
+  var c1 = v.c1 || club.colorAccento;
+  var c2 = v.c2 || club.colorFondo;
+  var dia = document.getElementById('c-dia').value;
+  var rgb = hexToRgb(c1);
+
+  document.getElementById('sv-bg').setAttribute('fill', c2);
+  document.getElementById('s-bg').style.background = c2;
+
+  var cards = '';
+  pistas.slice(0,3).forEach(function(p) {
+    var cub = p.tipo === 'cubierta';
+    var ico = cub
+      ? '<svg viewBox="0 0 24 24" fill="none" stroke="'+c1+'" stroke-width="1.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>'
+      : '<svg viewBox="0 0 24 24" fill="none" stroke="'+c1+'" stroke-width="1.5"><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="6.34" y2="6.34"/><line x1="17.66" y1="17.66" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/><line x1="4.93" y1="19.07" x2="6.34" y2="17.66"/><line x1="17.66" y1="6.34" x2="19.07" y2="4.93"/></svg>';
+    cards +=
+      '<div class="s-card" style="background:rgba('+rgb+',.13);border:1.5px solid rgba('+rgb+',.38)">'
+      +'<div class="s-ico">'+ico+'</div>'
+      +'<div>'
+      +'<div class="s-lbl">'+(cub?'PISTA LIBRE CUBIERTA':'PISTA LIBRE DESCUBIERTA')+'</div>'
+      +'<div class="s-hora" style="color:'+c1+'">'+fmtHora(p.hora)+'</div>'
+      +'</div></div>';
+  });
+
+  var logoHtml = club.logoUrl
+    ? '<img class="s-club-logo" src="'+club.logoUrl+'" alt="'+club.nombre+'">'
+    : '<div class="s-club-badge" style="background:rgba('+rgb+',.28)">'+club.nombre.toUpperCase()+'</div>';
+
+  document.getElementById('s-body').innerHTML =
+    '<div class="s-head">'
+    +'<div class="s-dia">'+dia+'</div>'
+    +'<div class="s-sub">PISTA <span style="color:'+c1+'">LIBRE</span></div>'
+    +'</div>'
+    +'<div class="s-cards">'+cards+'</div>'
+    +'<div class="s-foot">'
+    +'<div class="s-tel-row">'
+    +'<span class="s-tel-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.36 11.5a19.79 19.79 0 0 1-3.09-8.68A2 2 0 0 1 3.22 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.09 8.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21 16v.92z"/></svg></span>'
+    +'<span class="s-tel-num">'+club.telefono+'</span>'
+    +'</div>'
+    +'<div class="s-logos">'
+    +logoHtml
+    +'<div class="s-pp"><div class="s-pp-dot" style="background:'+c1+'"></div><span class="s-pp-txt">PadelPromos.es</span></div>'
+    +'</div>'
+    +'</div>';
+}
+
+// ─── GENERATE PNG ─────────────────────────────────────────
+async function generatePNG() {
+  document.getElementById('genOverlay').classList.add('show');
+  try {
+    var canvas = await html2canvas(document.getElementById('storyCanvas'), {
+      scale: 3,
+      useCORS: true,
+      allowTaint: false,
+      backgroundColor: null,
+      width: document.getElementById('storyCanvas').offsetWidth,
+      height: document.getElementById('storyCanvas').offsetHeight,
+    });
+    return new Promise(function(resolve) {
+      canvas.toBlob(function(blob) {
+        generatedBlob = blob;
+        resolve(blob);
+      }, 'image/png');
+    });
+  } finally {
+    document.getElementById('genOverlay').classList.remove('show');
+  }
+}
+
+async function generateAndShare() {
+  var blob = await generatePNG();
+  // Auto-download
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url;
+  a.download = 'pista-libre-' + document.getElementById('c-dia').value.toLowerCase() + '.png';
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('Imagen descargada ✓');
+  document.getElementById('shareMenu').style.display = 'block';
+}
+
+// ─── SHARE ────────────────────────────────────────────────
+async function shareNative() {
+  if (!generatedBlob) {
+    generatedBlob = await generatePNG();
+  }
+  var dia = document.getElementById('c-dia').value;
+  var file = new File([generatedBlob], 'pista-libre.png', {type:'image/png'});
+  var text = '🎾 ' + dia + ' — PISTA LIBRE en ' + club.nombre + '\nReserva en: ' + club.telefono;
+
+  if (navigator.share && navigator.canShare && navigator.canShare({files:[file]})) {
+    try {
+      await navigator.share({
+        title: 'Pista libre — ' + club.nombre,
+        text: text,
+        files: [file]
+      });
+      showToast('Compartido ✓');
+    } catch(e) {
+      if (e.name !== 'AbortError') showShareMenu();
+    }
+  } else {
+    showShareMenu();
+  }
+}
+
+function showShareMenu() {
+  var m = document.getElementById('shareMenu');
+  m.style.display = m.style.display === 'none' ? 'block' : 'none';
+}
+
+async function shareWA() {
+  if (!generatedBlob) generatedBlob = await generatePNG();
+  var dia = document.getElementById('c-dia').value;
+  var text = encodeURIComponent('🎾 '+dia+' — PISTA LIBRE\n'+club.nombre+' · '+club.telefono+'\n¡Aprovecha y reserva tu pista!');
+  // On mobile, Web Share API with file is better. On desktop, open WA web with text
+  if (navigator.share && /Mobi|Android/i.test(navigator.userAgent)) {
+    var file = new File([generatedBlob],'pista-libre.png',{type:'image/png'});
+    try{ await navigator.share({files:[file],text:decodeURIComponent(text)}); }catch(e){}
+  } else {
+    window.open('https://wa.me/?text='+text,'_blank');
+  }
+}
+
+async function shareIG() {
+  if (!generatedBlob) generatedBlob = await generatePNG();
+  // Download first, then instruct
+  var url = URL.createObjectURL(generatedBlob);
+  var a = document.createElement('a');
+  a.href=url;a.download='pista-libre-story.png';a.click();
+  URL.revokeObjectURL(url);
+  showToast('Imagen descargada — ábrela en Instagram Stories');
+}
+
+async function shareTG() {
+  var dia = document.getElementById('c-dia').value;
+  var text = encodeURIComponent('🎾 '+dia+' — PISTA LIBRE\n'+club.nombre+' · '+club.telefono);
+  window.open('https://t.me/share/url?url='+encodeURIComponent(window.location.href)+'&text='+text,'_blank');
+}
+
+function copyLink() {
+  navigator.clipboard.writeText(window.location.href).then(function(){
+    showToast('Enlace copiado ✓');
+  });
+}
+
+// ─── TOAST ────────────────────────────────────────────────
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(function(){ t.classList.remove('show'); }, 2200);
+}
+
+// ─── START ────────────────────────────────────────────────
+init();
+</script>
+</body>
+</html>
