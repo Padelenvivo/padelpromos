@@ -186,6 +186,7 @@
     @media (max-width: 768px) {
       nav { padding: 0 20px; }
   .nav-toggle { display: inline-flex; }
+      .nav-cta { display: none; }
         .nav-links { position: absolute; top: 60px; left: 0; right: 0; flex-direction: column; gap: 0; background: #fff; border-bottom: 0.5px solid var(--border2); box-shadow: 0 12px 24px rgba(0,0,0,.08); max-height: 0; overflow: hidden; opacity: 0; transition: max-height .25s ease, opacity .2s ease; }
         .nav-links.open { max-height: 400px; opacity: 1; }
         .nav-links li { width: 100%; }
@@ -209,11 +210,11 @@
 <nav>
   <a href="/" class="nav-logo">Padel<b>Promos</b></a>
   <ul class="nav-links">
-    <li><a href="#como-funciona">Cómo funciona</a></li>
-    <li><a href="#ejemplos">Ejemplos</a></li>
-    <li><a href="agenda.html">Agenda de torneos</a></li>
-    <li><a href="resultados.html">Resultados</a></li>
+    <li><a href="/">Home</a></li>
+    <li><a href="agenda.html">Agenda de Torneos</a></li>
+    <li><a href="pistas-libres.html">Pistas Libres</a></li>
     <li><a href="precios.html">Precios</a></li>
+    <li><a href="#contacto">Contacto</a></li>
   </ul>
   <button class="nav-toggle" aria-label="Abrir menú" aria-expanded="false">☰</button>
   <a href="generador.html" class="nav-cta">Empezar gratis →</a>
