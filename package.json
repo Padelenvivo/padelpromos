@@ -2,5 +2,8 @@
   "name": "padelpromos",
   "version": "1.0.0",
   "private": true,
-  "type": "module"
+  "type": "module",
+  "dependencies": {
+    "@octokit/rest": "^21.0.2"
+  }
 }
