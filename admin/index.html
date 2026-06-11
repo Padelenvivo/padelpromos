@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin — PadelPromos</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --g:#1D9E75;--gd:#0F6E56;--gl:#E1F5EE;--gm:#9FE1CB;
+  --text:#0f1a14;--text2:#4a5e54;--text3:#8aa096;
+  --bg:#ffffff;--bg2:#f5faf7;--bg3:#edf6f1;
+  --border:rgba(29,158,117,.15);--border2:rgba(29,158,117,.3);
+  --red:#ef4444;--red-bg:#fef2f2;
+  --radius:10px;--radius-lg:14px;
+}
+body{font-family:'DM Sans',sans-serif;background:var(--bg2);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased}
+.login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+.login-box{background:var(--bg);border:0.5px solid var(--border2);border-radius:var(--radius-lg);padding:40px;width:100%;max-width:400px;box-shadow:0 4px 24px rgba(0,0,0,.06)}
+.login-logo{font-size:20px;font-weight:500;color:var(--text);text-decoration:none;margin-bottom:28px;display:block}
+.login-logo b{color:var(--g);font-weight:500}
+.login-title{font-size:22px;font-weight:600;color:var(--text);margin-bottom:6px}
+.login-sub{font-size:14px;color:var(--text2);margin-bottom:28px}
+.login-label{display:block;font-size:13px;font-weight:500;color:var(--text);margin-bottom:6px}
+.login-input{width:100%;padding:10px 14px;border:0.5px solid var(--border2);border-radius:var(--radius);font-size:14px;font-family:'DM Sans',sans-serif;color:var(--text);background:var(--bg);outline:none;transition:border-color .2s,box-shadow .2s;margin-bottom:16px}
+.login-input:focus{border-color:var(--g);box-shadow:0 0 0 3px rgba(29,158,117,.1)}
+.login-btn{width:100%;padding:12px;background:var(--g);color:#fff;border:none;border-radius:var(--radius);font-size:14px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background .2s}
+.login-btn:hover{background:var(--gd)}
+.login-err{font-size:13px;color:var(--red);background:var(--red-bg);padding:10px 14px;border-radius:var(--radius);margin-bottom:16px;display:none}
+.admin-wrap{display:none;min-height:100vh}
+nav{background:rgba(255,255,255,.95);backdrop-filter:blur(12px);border-bottom:0.5px solid var(--border2);padding:0 32px;display:flex;align-items:center;justify-content:space-between;height:60px;position:sticky;top:0;z-index:100}
+.nav-logo{font-size:17px;font-weight:500;color:var(--text);text-decoration:none}
+.nav-logo b{color:var(--g);font-weight:500}
+.nav-badge{font-size:11px;font-weight:500;color:var(--gd);background:var(--gl);padding:3px 10px;border-radius:10px;border:0.5px solid var(--gm)}
+.nav-right{display:flex;align-items:center;gap:12px}
+.nav-logout{font-size:13px;color:var(--text2);background:none;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;padding:6px 10px;border-radius:var(--radius);transition:background .2s}
+.nav-logout:hover{background:var(--bg3)}
+main{padding:40px 32px;max-width:1100px;margin:0 auto}
+.page-title{font-size:26px;font-weight:600;color:var(--text);margin-bottom:4px}
+.page-sub{font-size:14px;color:var(--text2);margin-bottom:32px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:32px}
+.stat-card{background:var(--bg);border:0.5px solid var(--border2);border-radius:var(--radius-lg);padding:20px 24px}
+.stat-num{font-size:32px;font-weight:600;color:var(--g);line-height:1}
+.stat-label{font-size:13px;color:var(--text2);margin-top:4px}
+.section{background:var(--bg);border:0.5px solid var(--border2);border-radius:var(--radius-lg);padding:28px;margin-bottom:24px}
+.section-title{font-size:15px;font-weight:600;color:var(--text);margin-bottom:4px}
+.section-sub{font-size:13px;color:var(--text2);margin-bottom:24px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.form-group{display:flex;flex-direction:column;gap:6px}
+.form-group.full{grid-column:1/-1}
+label{font-size:13px;font-weight:500;color:var(--text)}
+input[type=text],input[type=url]{padding:10px 14px;border:0.5px solid var(--border2);border-radius:var(--radius);font-size:14px;font-family:'DM Sans',sans-serif;color:var(--text);background:var(--bg);outline:none;transition:border-color .2s,box-shadow .2s}
+input[type=text]:focus,input[type=url]:focus{border-color:var(--g);box-shadow:0 0 0 3px rgba(29,158,117,.1)}
+.color-row{display:flex;align-items:center;gap:10px}
+.color-row input[type=color]{width:40px;height:38px;border:0.5px solid var(--border2);border-radius:var(--radius);cursor:pointer;padding:2px;background:var(--bg)}
+.color-row input[type=text]{flex:1}
+.btn-create{padding:11px 24px;background:var(--g);color:#fff;border:none;border-radius:var(--radius);font-size:14px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background .2s;margin-top:8px;display:inline-flex;align-items:center;gap:8px}
+.btn-create:hover{background:var(--gd)}
+.btn-create:disabled{opacity:.6;cursor:not-allowed}
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+th{font-size:11px;font-weight:500;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;padding:10px 16px;text-align:left;border-bottom:0.5px solid var(--border2)}
+td{padding:14px 16px;font-size:13px;color:var(--text);border-bottom:0.5px solid var(--border)}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--bg2)}
+.badge-active{font-size:11px;font-weight:500;color:#166534;background:#dcfce7;padding:3px 10px;border-radius:8px}
+.badge-inactive{font-size:11px;font-weight:500;color:#991b1b;background:#fee2e2;padding:3px 10px;border-radius:8px}
+.token-chip{font-family:monospace;font-size:12px;background:var(--bg2);border:0.5px solid var(--border2);padding:4px 10px;border-radius:6px;color:var(--text2);cursor:pointer;transition:all .2s}
+.token-chip:hover{background:var(--gl);color:var(--gd);border-color:var(--gm)}
+.btn-toggle{padding:5px 12px;border:0.5px solid var(--border2);border-radius:6px;font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer;background:var(--bg);color:var(--text2);transition:all .2s}
+.btn-toggle:hover{background:var(--bg3)}
+.btn-copy-url{padding:5px 12px;border:0.5px solid var(--border2);border-radius:6px;font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer;background:var(--bg);color:var(--g);transition:all .2s}
+.btn-copy-url:hover{background:var(--gl)}
+.color-dot{width:16px;height:16px;border-radius:50%;display:inline-block;border:0.5px solid rgba(0,0,0,.1);vertical-align:middle;margin-right:4px}
+.toast{position:fixed;bottom:24px;right:24px;background:var(--text);color:#fff;padding:12px 20px;border-radius:var(--radius);font-size:13px;font-weight:500;opacity:0;transform:translateY(8px);transition:all .25s;pointer-events:none;z-index:999}
+.toast.show{opacity:1;transform:translateY(0)}
+.empty-state{text-align:center;padding:48px 20px;color:var(--text3);font-size:13px}
+.spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media(max-width:768px){.form-grid{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<div class="login-wrap" id="loginWrap">
+  <div class="login-box">
+    <a class="login-logo" href="/"><b>Padel</b>Promos</a>
+    <div class="login-title">Panel de Administración</div>
+    <div class="login-sub">Acceso restringido. Introduce la contraseña de admin.</div>
+    <div class="login-err" id="loginErr">Contraseña incorrecta</div>
+    <label class="login-label">Contraseña</label>
+    <input type="password" class="login-input" id="loginPass" placeholder="••••••••" autocomplete="current-password">
+    <button class="login-btn" onclick="doLogin()">Entrar</button>
+  </div>
+</div>
+<div class="admin-wrap" id="adminWrap">
+  <nav>
+    <a class="nav-logo" href="/"><b>Padel</b>Promos</a>
+    <div class="nav-right">
+      <span class="nav-badge">Admin</span>
+      <button class="nav-logout" onclick="doLogout()">Cerrar sesión</button>
+    </div>
+  </nav>
+  <main>
+    <div class="page-title">Gestión de Accesos</div>
+    <div class="page-sub">Crea y gestiona los accesos al generador de torneos para cada club.</div>
+    <div class="stats">
+      <div class="stat-card"><div class="stat-num" id="statTotal">—</div><div class="stat-label">Clubs registrados</div></div>
+      <div class="stat-card"><div class="stat-num" id="statActive">—</div><div class="stat-label">Accesos activos</div></div>
+      <div class="stat-card"><div class="stat-num" id="statInactive">—</div><div class="stat-label">Accesos inactivos</div></div>
+    </div>
+    <div class="section">
+      <div class="section-title">Crear nuevo acceso</div>
+      <div class="section-sub">Rellena los datos del club para generar su token de acceso único al generador de torneos.</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Nombre del club *</label>
+          <input type="text" id="newNombre" placeholder="Ej: Club Pádel Mallorca">
+        </div>
+        <div class="form-group">
+          <label>Teléfono</label>
+          <input type="text" id="newTelefono" placeholder="Ej: 971 77 30 34">
+        </div>
+        <div class="form-group">
+          <label>Color acento</label>
+          <div class="color-row">
+            <input type="color" id="newColorAccentoP" value="#1D9E75" oninput="document.getElementById('newColorAccento').value=this.value">
+            <input type="text" id="newColorAccento" placeholder="#1D9E75" value="#1D9E75" oninput="syncColor('newColorAccentoP','newColorAccento')">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Color fondo</label>
+          <div class="color-row">
+            <input type="color" id="newColorFondoP" value="#0d2040" oninput="document.getElementById('newColorFondo').value=this.value">
+            <input type="text" id="newColorFondo" placeholder="#0d2040" value="#0d2040" oninput="syncColor('newColorFondoP','newColorFondo')">
+          </div>
+        </div>
+        <div class="form-group full">
+          <label>URL del logo <span style="color:var(--text3);font-weight:400">(opcional)</span></label>
+          <input type="url" id="newLogoUrl" placeholder="https://...">
+        </div>
+      </div>
+      <button class="btn-create" onclick="crearClub()" id="btnCreate">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Crear acceso
+      </button>
+    </div>
+    <div class="section">
+      <div class="section-title">Clubs con acceso</div>
+      <div class="section-sub">Haz click en el token para copiarlo. El enlace de acceso al generador es <b>padelpromos.es/generador?club=TOKEN</b></div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Club</th><th>Token de acceso</th><th>Colores</th><th>Estado</th><th>Enlace generador</th><th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="clubsTable">
+            <tr><td colspan="6" class="empty-state">Cargando clubs...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+const ADMIN_PASS='padelpromos2025';
+const BASE='https://www.padelpromos.es';
+
+function syncColor(pickerId,textId){
+  const v=document.getElementById(textId).value;
+  if(/^#[0-9a-fA-F]{6}$/.test(v))document.getElementById(pickerId).value=v;
+}
+
+function doLogin(){
+  const p=document.getElementById('loginPass').value;
+  if(p===ADMIN_PASS){
+    sessionStorage.setItem('pp_admin','1');
+    document.getElementById('loginWrap').style.display='none';
+    document.getElementById('adminWrap').style.display='block';
+    loadClubs();
+  }else{
+    document.getElementById('loginErr').style.display='block';
+    document.getElementById('loginPass').value='';
+  }
+}
+
+function doLogout(){
+  sessionStorage.removeItem('pp_admin');
+  location.reload();
+}
+
+document.getElementById('loginPass').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin()});
+
+if(sessionStorage.getItem('pp_admin')==='1'){
+  document.getElementById('loginWrap').style.display='none';
+  document.getElementById('adminWrap').style.display='block';
+  loadClubs();
+}
+
+function genToken(nombre){
+  const slug=nombre.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9]+/g,'').slice(0,8);
+  const chars='abcdefghijklmnopqrstuvwxyz0123456789';
+  let r='';for(let i=0;i<5;i++)r+=chars[Math.floor(Math.random()*chars.length)];
+  return slug+'-'+r;
+}
+
+async function loadClubs(){
+  try{
+    const res=await fetch('/api/admin-clubs',{headers:{'x-admin-key':ADMIN_PASS}});
+    if(!res.ok)throw new Error('Error '+res.status);
+    const clubs=await res.json();
+    renderTable(clubs);
+    const entries=Object.entries(clubs);
+    const active=entries.filter(([,v])=>v.activo).length;
+    document.getElementById('statTotal').textContent=entries.length;
+    document.getElementById('statActive').textContent=active;
+    document.getElementById('statInactive').textContent=entries.length-active;
+  }catch(e){
+    document.getElementById('clubsTable').innerHTML='<tr><td colspan="6" class="empty-state">Error cargando datos: '+e.message+'</td></tr>';
+  }
+}
+
+function renderTable(clubs){
+  const tbody=document.getElementById('clubsTable');
+  const entries=Object.entries(clubs);
+  if(!entries.length){tbody.innerHTML='<tr><td colspan="6" class="empty-state">No hay clubs creados todavía.</td></tr>';return;}
+  tbody.innerHTML=entries.map(([token,club])=>
+    '<tr>'+
+    '<td><b>'+club.nombre+'</b>'+(club.telefono?'<br><span style="color:var(--text3);font-size:12px">'+club.telefono+'</span>':'')+'</td>'+
+    '<td><span class="token-chip" onclick="copyText(''+token+'')" title="Click para copiar">'+token+'</span></td>'+
+    '<td><span class="color-dot" style="background:'+club.colorAccento+'" title="Acento"></span><span class="color-dot" style="background:'+club.colorFondo+'" title="Fondo"></span><span style="font-size:11px;color:var(--text3)">'+club.colorAccento+'</span></td>'+
+    '<td>'+(club.activo?'<span class="badge-active">Activo</span>':'<span class="badge-inactive">Inactivo</span>')+'</td>'+
+    '<td><button class="btn-copy-url" onclick="copyText(''+BASE+'/generador?club='+token+'')">Copiar enlace</button></td>'+
+    '<td><button class="btn-toggle" onclick="toggleClub(''+token+'','+(!club.activo)+')">'+(club.activo?'Desactivar':'Activar')+'</button></td>'+
+    '</tr>'
+  ).join('');
+}
+
+async function crearClub(){
+  const nombre=document.getElementById('newNombre').value.trim();
+  if(!nombre){showToast('El nombre es obligatorio');return;}
+  const token=genToken(nombre);
+  const club={
+    nombre,
+    telefono:document.getElementById('newTelefono').value.trim(),
+    colorAccento:document.getElementById('newColorAccento').value||'#1D9E75',
+    colorFondo:document.getElementById('newColorFondo').value||'#0d2040',
+    logoUrl:document.getElementById('newLogoUrl').value.trim(),
+    activo:true
+  };
+  const btn=document.getElementById('btnCreate');
+  btn.disabled=true;
+  btn.innerHTML='<span class="spinner"></span> Creando...';
+  try{
+    const res=await fetch('/api/admin-clubs',{method:'POST',headers:{'Content-Type':'application/json','x-admin-key':ADMIN_PASS},body:JSON.stringify({token,club})});
+    if(!res.ok){const e=await res.json();throw new Error(e.error||'Error');}
+    showToast('Club creado. Token: '+token);
+    ['newNombre','newTelefono','newLogoUrl'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('newColorAccento').value='#1D9E75';
+    document.getElementById('newColorAccentoP').value='#1D9E75';
+    document.getElementById('newColorFondo').value='#0d2040';
+    document.getElementById('newColorFondoP').value='#0d2040';
+    loadClubs();
+  }catch(e){showToast('Error: '+e.message);}
+  finally{
+    btn.disabled=false;
+    btn.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Crear acceso';
+  }
+}
+
+async function toggleClub(token,estado){
+  try{
+    const res=await fetch('/api/admin-clubs',{method:'PATCH',headers:{'Content-Type':'application/json','x-admin-key':ADMIN_PASS},body:JSON.stringify({token,activo:estado})});
+    if(!res.ok)throw new Error('Error');
+    showToast(estado?'Club activado':'Club desactivado');
+    loadClubs();
+  }catch(e){showToast('Error: '+e.message);}
+}
+
+function copyText(text){
+  navigator.clipboard.writeText(text).then(()=>showToast('Copiado al portapapeles'));
+}
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3000);
+}
+</script>
+</body>
+</html>
